@@ -17,15 +17,13 @@
   <script>
     let deferredPrompt;
 
-    // Cattura l'evento standard del browser quando disponibile
+    // Questa è la chiave: l'evento si attiva SOLO quando Android ritiene il sito pronto per l'installazione
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-    });
-
-    // Mostra il banner di installazione forzandolo all'apertura della pagina
-    window.addEventListener('load', () => {
-      setTimeout(mostraPromptInstallazione, 800); // 0.8 secondi di attesa all'apertura
+      
+      // Ora che Android è PRONTO, mostra il banner di installazione personalizzato!
+      mostraPromptInstallazione();
     });
 
     function mostraPromptInstallazione() {
@@ -68,13 +66,11 @@
       document.getElementById('install-yes').onclick = async () => {
         banner.remove();
         if (deferredPrompt) {
+          // Lancia la schermata nativa di Android all'istante senza errori
           deferredPrompt.prompt();
           const { outcome } = await deferredPrompt.userChoice;
           console.log(`Risposta utente all'installazione: ${outcome}`);
           deferredPrompt = null;
-        } else {
-          // Messaggio di supporto se il browser non passa l'installazione automatica diretta
-          alert("Per installare l'app, tocca i tre puntini in alto nel browser e seleziona 'Aggiungi a schermata Home' o 'Installa app'.");
         }
       };
 
