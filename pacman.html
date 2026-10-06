@@ -39,14 +39,15 @@
     .game-container {
       width: 100vw;
       height: 100vh;
-      max-width: 450px; /* Limite massimo per tablet o schermi larghi */
-      padding: 8px;
+      max-width: 420px;
+      padding: 6px 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
     }
     .back-home-container {
+      margin-bottom: 2px;
       text-align: left;
       width: 100%;
     }
@@ -55,15 +56,15 @@
       border: 2px solid #38285c;
       color: #ff7518;
       font-family: 'Creepster', cursive;
-      font-size: 0.8rem;
-      padding: 4px 8px;
+      font-size: 0.9rem;
+      padding: 4px 10px;
       border-radius: 6px;
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
     }
     .halloween-title {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       margin: 2px 0;
       text-align: center;
       color: #ff7518;
@@ -80,6 +81,7 @@
       border: 2px solid #38285c;
       border-radius: 8px;
       padding: 6px 10px;
+      margin-bottom: 4px;
     }
     .hud-stat {
       text-align: center;
@@ -87,12 +89,12 @@
       flex-direction: column;
     }
     .hud-stat label {
-      font-size: 0.55rem;
+      font-size: 0.6rem;
       color: #a0a0ff;
       font-family: 'Roboto', sans-serif;
     }
     .hud-stat span {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: #fff;
       font-weight: bold;
     }
@@ -101,14 +103,14 @@
       color: #141026;
       border: none;
       font-family: 'Creepster', cursive;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       padding: 4px 12px;
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
     }
 
-    /* Canvas dinamico a tutto schermo */
+    /* Canvas dinamico che si espande verticalmente */
     .canvas-wrapper {
       flex: 1;
       display: flex;
@@ -116,12 +118,12 @@
       align-items: center;
       width: 100%;
       min-height: 0;
-      padding: 4px 0;
+      padding: 2px 0;
     }
     canvas#pacman-canvas {
       background-color: #0b0914;
       border: 2px solid #4a2875;
-      border-radius: 6px;
+      border-radius: 8px;
       box-shadow: inset 0 0 10px #000;
       max-width: 100%;
       max-height: 100%;
@@ -135,17 +137,18 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
+      gap: 6px;
+      margin-top: 4px;
+      margin-bottom: 6px;
     }
     .touch-btn {
       flex: 1;
-      height: 54px;
+      height: 52px;
       background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
       border: 2px solid #5a3291;
       border-radius: 10px;
       cursor: pointer;
-      box-shadow: 0 4px 0 #0a0714;
+      box-shadow: 0 3px 0 #0a0714;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
       padding: 0;
@@ -155,13 +158,13 @@
       overflow: hidden;
     }
     .touch-btn:active {
-      transform: translateY(3px);
+      transform: translateY(2px);
       box-shadow: 0 1px 0 #0a0714;
       background: #9d4edd;
     }
     .hand-icon {
-      width: 70%;
-      height: 70%;
+      width: 75%;
+      height: 75%;
       object-fit: contain;
       image-rendering: pixelated;
     }
@@ -171,8 +174,9 @@
   <div class="game-container">
     <div class="back-home-container">
       <a href="index.html" class="back-btn">⬅ TORNA ALLA HOME</a>
-      <h1 class="halloween-title">SPOOKY PAC-MAN 🎃</h1>
     </div>
+
+    <h1 class="halloween-title">SPOOKY PAC-MAN 🎃</h1>
 
     <!-- HUD Superiore -->
     <div class="top-hud">
@@ -209,7 +213,6 @@
     const canvas = document.getElementById('pacman-canvas');
     const ctx = canvas.getContext('2d');
 
-    // Risoluzione interna fissa del labirinto (14x14 celle da 24px = 336x336 px interni)
     const internalSize = 336;
     canvas.width = internalSize;
     canvas.height = internalSize;
@@ -401,13 +404,13 @@
 
     document.getElementById('p-up').onclick = () => { mummia.dx = 0; mummia.dy = -1; };
     document.getElementById('p-down').onclick = () => { mummia.dx = 0; mummia.dy = 1; };
-    document.getElementById('p-left').onclick = () =>5 { mummia.dx = -1; mummia.dy = 0; };
+    document.getElementById('p-left').onclick = () => { mummia.dx = -1; mummia.dy = 0; };
     document.getElementById('p-right').onclick = () => { mummia.dx = 1; mummia.dy = 0; };
 
     document.getElementById('start-pacman-btn').onclick = () => {
       if (!isRunning) {
         isRunning = true;
-        gameInterval = setInterval(update, 350);
+        gameIntent = setInterval(update, 350);
         document.getElementById('start-pacman-btn').innerText = "PAUSE";
       } else {
         isRunning = false;
