@@ -157,3 +157,17 @@ canvas#tetris {
   letter-spacing: 1px;
   border-color: #7b42c9;
 }
+
+.icon-btn {
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hand-icon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
