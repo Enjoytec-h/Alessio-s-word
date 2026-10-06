@@ -159,15 +159,18 @@
     <!-- Canvas allargato (16x16 celle da 21px = 336x336 px) -->
     <canvas id="pacman-canvas" width="336" height="336"></canvas>
 
-    <!-- Controlli Touch Mobile -->
+   <!-- Controlli Touch Mobile (Disposizione a coppie bilanciate) -->
     <div class="touch-controls">
-      <div class="touch-row">
-        <button class="touch-btn icon-btn" id="p-up"><img src="sopra.jpg" class="hand-icon" alt="Sopra"></button>
+      <!-- Colonna Sinistra: Sinistra e Sotto -->
+      <div class="touch-column">
+        <button class="touch-btn" id="p-left"><img src="sinistra.jpg" class="hand-icon" alt="Sinistra"></button>
+        <button class="touch-btn" id="p-down"><img src="sotto.jpg" class="hand-icon" alt="Sotto"></button>
       </div>
-      <div class="touch-row">
-        <button class="touch-btn icon-btn" id="p-left"><img src="sinistra.jpg" class="hand-icon" alt="Sinistra"></button>
-        <button class="touch-btn icon-btn" id="p-down"><img src="sotto.jpg" class="hand-icon" alt="Sotto"></button>
-        <button class="touch-btn icon-btn" id="p-right"><img src="destra.jpg" class="hand-icon" alt="Destra"></button>
+
+      <!-- Colonna Destra: Destra e Sopra -->
+      <div class="touch-column">
+        <button class="touch-btn" id="p-right"><img src="destra.jpg" class="hand-icon" alt="Destra"></button>
+        <button class="touch-btn" id="p-up"><img src="sopra.jpg" class="hand-icon" alt="Sopra"></button>
       </div>
     </div>
 
