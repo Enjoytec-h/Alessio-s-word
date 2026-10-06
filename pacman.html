@@ -37,17 +37,16 @@
       align-items: center;
     }
     .game-container {
-      width: 100vw;
-      height: 100vh;
-      max-width: 420px;
-      padding: 6px 10px;
+      width: 100%;
+      height: 100%;
+      max-width: 500px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
     }
     .back-home-container {
-      margin-bottom: 2px;
       text-align: left;
       width: 100%;
     }
@@ -64,8 +63,8 @@
       display: inline-block;
     }
     .halloween-title {
-      font-size: 1.3rem;
-      margin: 2px 0;
+      font-size: 1.4rem;
+      margin: 4px 0;
       text-align: center;
       color: #ff7518;
       font-family: 'Creepster', cursive;
@@ -80,8 +79,8 @@
       background: #141026;
       border: 2px solid #38285c;
       border-radius: 8px;
-      padding: 6px 10px;
-      margin-bottom: 4px;
+      padding: 6px 12px;
+      margin-bottom: 6px;
     }
     .hud-stat {
       text-align: center;
@@ -89,12 +88,12 @@
       flex-direction: column;
     }
     .hud-stat label {
-      font-size: 0.6rem;
+      font-size: 0.65rem;
       color: #a0a0ff;
       font-family: 'Roboto', sans-serif;
     }
     .hud-stat span {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: #fff;
       font-weight: bold;
     }
@@ -103,14 +102,14 @@
       color: #141026;
       border: none;
       font-family: 'Creepster', cursive;
-      font-size: 0.9rem;
-      padding: 4px 12px;
+      font-size: 0.95rem;
+      padding: 6px 14px;
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
     }
 
-    /* Canvas dinamico che si espande verticalmente */
+    /* Canvas dinamico che sfrutta tutto lo spazio disponibile */
     .canvas-wrapper {
       flex: 1;
       display: flex;
@@ -118,13 +117,15 @@
       align-items: center;
       width: 100%;
       min-height: 0;
-      padding: 2px 0;
+      padding: 4px 0;
     }
     canvas#pacman-canvas {
       background-color: #0b0914;
       border: 2px solid #4a2875;
       border-radius: 8px;
-      box-shadow: inset 0 0 10px #000;
+      box-shadow: inset 0 0 12px #000;
+      width: 100%;
+      height: 100%;
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
@@ -137,18 +138,18 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 6px;
-      margin-top: 4px;
+      gap: 8px;
+      margin-top: 6px;
       margin-bottom: 6px;
     }
     .touch-btn {
       flex: 1;
-      height: 52px;
+      height: 58px;
       background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
       border: 2px solid #5a3291;
       border-radius: 10px;
       cursor: pointer;
-      box-shadow: 0 3px 0 #0a0714;
+      box-shadow: 0 4px 0 #0a0714;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
       padding: 0;
@@ -158,7 +159,7 @@
       overflow: hidden;
     }
     .touch-btn:active {
-      transform: translateY(2px);
+      transform: translateY(3px);
       box-shadow: 0 1px 0 #0a0714;
       background: #9d4edd;
     }
@@ -190,7 +191,7 @@
       </div>
       <div class="hud-stat">
         <label>LIVES</label>
-        <span id="lives" style="font-size: 0.6rem;">🦇🦇🦇</span>
+        <span id="lives" style="font-size: 0.7rem;">🦇🦇🦇</span>
       </div>
       <button id="start-pacman-btn" class="gothic-btn-top">PLAY</button>
     </div>
@@ -410,7 +411,7 @@
     document.getElementById('start-pacman-btn').onclick = () => {
       if (!isRunning) {
         isRunning = true;
-        gameIntent = setInterval(update, 350);
+        gameInterval = setInterval(update, 350);
         document.getElementById('start-pacman-btn').innerText = "PAUSE";
       } else {
         isRunning = false;
