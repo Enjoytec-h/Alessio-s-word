@@ -7,15 +7,26 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@700&display=swap" rel="stylesheet">
   <style>
+    /* Riduciamo leggermente i margini generali per far stare tutto senza scrollare */
+    body {
+      margin: 0;
+      padding: 4px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #08070c;
+    }
     .game-container {
-      max-width: 360px;
-      padding: 8px;
+      max-width: 350px;
+      padding: 6px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      gap: 5px;
     }
     .back-home-container {
-      margin-bottom: 5px;
+      margin-bottom: 2px;
       text-align: left;
       width: 100%;
     }
@@ -24,30 +35,29 @@
       border: 2px solid #38285c;
       color: #ff7518;
       font-family: 'Creepster', cursive;
-      font-size: 0.9rem;
-      padding: 4px 10px;
+      font-size: 0.85rem;
+      padding: 3px 8px;
       border-radius: 6px;
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
     }
     .halloween-title {
-      font-size: 1.5rem;
-      margin: 5px 0;
+      font-size: 1.3rem;
+      margin: 2px 0;
       text-align: center;
     }
     
-    /* Pannello statistiche e play in alto, disposti in orizzontale */
+    /* Pannello statistiche e play in alto */
     .top-hud {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      width: 336px;
+      width: 320px;
       background: #141026;
       border: 2px solid #38285c;
       border-radius: 8px;
-      padding: 6px 10px;
-      margin-bottom: 8px;
+      padding: 4px 8px;
       box-sizing: border-box;
     }
     .hud-stat {
@@ -56,12 +66,12 @@
       flex-direction: column;
     }
     .hud-stat label {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       color: #a0a0ff;
       font-family: 'Roboto', sans-serif;
     }
     .hud-stat span {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #fff;
       font-weight: bold;
     }
@@ -70,72 +80,60 @@
       color: #141026;
       border: none;
       font-family: 'Creepster', cursive;
-      font-size: 1rem;
-      padding: 4px 14px;
+      font-size: 0.9rem;
+      padding: 3px 10px;
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
     }
 
-    /* Canvas ingrandito */
+    /* Canvas ottimizzato per lo schermo del telefono */
     canvas#pacman-canvas {
       background-color: #0b0914;
-      border: 3px solid #4a2875;
-      border-radius: 8px;
-      box-shadow: inset 0 0 15px #000;
-      width: 336px;
-      height: 336px;
+      border: 2px solid #4a2875;
+      border-radius: 6px;
+      box-shadow: inset 0 0 10px #000;
+      width: 320px;
+      height: 320px;
       display: block;
     }
 
-    /* Pulsanti Touch Mobile a due colonne affiancate */
+    /* GRIGLIA TOUCH A 4 PULSANTI COMPATTA (Disposizione ergonomica a croce/blocchi) */
     .touch-controls {
-      width: 100%;
-      max-width: 336px;
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 10px;
-    }
-
-    .touch-column {
+      width: 320px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      flex: 1;
+      align-items: center;
+      gap: 4px;
+      margin-top: 4px;
     }
-
-    .touch-btn {
+    .touch-row {
+      display: flex;
+      gap: 8px;
       width: 100%;
+      justify-content: center;
+    }
+    .touch-btn {
       background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
       border: 2px solid #5a3291;
-      border-radius: 12px;
+      border-radius: 10px;
       cursor: pointer;
-      box-shadow: 0 4px 0 #0a0714, 0 0 10px rgba(157, 78, 221, 0.2);
+      box-shadow: 0 3px 0 #0a0714;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
-      height: 60px;
+      width: 90px;
+      height: 46px; /* Basso e largo per non allungare la pagina */
       padding: 0;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
     }
-
     .touch-btn:active {
       transform: translateY(2px);
-      box-shadow: 0 2px 0 #0a0714;
+      box-shadow: 0 1px 0 #0a0714;
       background: #9d4edd;
     }
-
-    .icon-btn {
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
     .hand-icon {
       width: 100%;
       height: 100%;
@@ -154,7 +152,7 @@
       <h1 class="halloween-title">SPOOKY PAC-MAN 🎃</h1>
     </div>
 
-    <!-- HUD Superiore con Score, Level, Lives e Play -->
+    <!-- HUD Superiore -->
     <div class="top-hud">
       <div class="hud-stat">
         <label>SCORE</label>
@@ -166,25 +164,28 @@
       </div>
       <div class="hud-stat">
         <label>LIVES</label>
-        <span id="lives" style="font-size: 0.65rem;">🦇🦇🦇</span>
+        <span id="lives" style="font-size: 0.6rem;">🦇🦇🦇</span>
       </div>
       <button id="start-pacman-btn" class="gothic-btn-top">PLAY</button>
     </div>
 
-    <!-- Canvas allargato (16x16 celle da 21px = 336x336 px) -->
-    <canvas id="pacman-canvas" width="336" height="336"></canvas>
+    <!-- Canvas (320x320 px) -->
+    <canvas id="pacman-canvas" width="320" height="320"></canvas>
 
-    <!-- Controlli Touch Mobile a due colonne (Sinistra/Sotto a sinistra, Destra/Sopra a destra) -->
+    <!-- Controlli Touch Compatti a blocco (2 sopra/sotto, 2 sinistra/destra) -->
     <div class="touch-controls">
-      <!-- Colonna Sinistra -->
-      <div class="touch-column">
-        <button class="touch-btn icon-btn" id="p-left"><img src="sinistra.jpg" class="hand-icon" alt="Sinistra"></button>
-        <button class="touch-btn icon-btn" id="p-down"><img src="sotto.jpg" class="hand-icon" alt="Sotto"></button>
+      <!-- Riga Superiore: Sopra -->
+      <div class="touch-row">
+        <button class="touch-btn" id="p-up"><img src="sopra.jpg" class="hand-icon" alt="Sopra"></button>
       </div>
-      <!-- Colonna Destra -->
-      <div class="touch-column">
-        <button class="touch-btn icon-btn" id="p-right"><img src="destra.jpg" class="hand-icon" alt="Destra"></button>
-        <button class="touch-btn icon-btn" id="p-up"><img src="sopra.jpg" class="hand-icon" alt="Sopra"></button>
+      <!-- Riga Centrale: Sinistra e Destra affiancati -->
+      <div class="touch-row" style="justify-content: space-between; padding: 0 20px;">
+        <button class="touch-btn" id="p-left"><img src="sinistra.jpg" class="hand-icon" alt="Sinistra"></button>
+        <button class="touch-btn" id="p-right"><img src="destra.jpg" class="hand-icon" alt="Destra"></button>
+      </div>
+      <!-- Riga Inferiore: Sotto -->
+      <div class="touch-row">
+        <button class="touch-btn" id="p-down"><img src="sotto.jpg" class="hand-icon" alt="Sotto"></button>
       </div>
     </div>
   </div>
@@ -193,7 +194,7 @@
     const canvas = document.getElementById('pacman-canvas');
     const ctx = canvas.getContext('2d');
 
-    const tileSize = 21; 
+    const tileSize = 20; // 16 celle x 20px = 320x320 px (perfetto nello schermo mobile)
     let map = [
       [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
       [1,2,0,0,0,0,1,0,0,1,0,0,0,0,2,1],
@@ -253,10 +254,10 @@
             let cy = posY + tileSize / 2;
             ctx.fillStyle = '#ff7518';
             ctx.beginPath();
-            ctx.arc(cx, cy + 1, 7, 0, Math.PI * 2);
+            ctx.arc(cx, cy + 1, 6, 0, Math.PI * 2);
             ctx.fill();
             ctx.fillStyle = '#38b000';
-            ctx.fillRect(cx - 1, cy - 9, 2, 3);
+            ctx.fillRect(cx - 1, cy - 8, 2, 3);
           }
         }
       }
@@ -265,10 +266,10 @@
       let my = mummia.y * tileSize + tileSize/2;
       ctx.fillStyle = powerTimer > 0 ? '#00ffcc' : '#d4d4d4';
       ctx.beginPath();
-      ctx.arc(mx, my, 8, 0, Math.PI * 2);
+      ctx.arc(mx, my, 7, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#000';
-      ctx.fillRect(mx - 3, my - 3, 2, 2);
+      ctx.fillRect(mx - 2, my - 3, 2, 2);
       ctx.fillRect(mx + 1, my - 3, 2, 2);
 
       nemici.forEach((n, index) => {
@@ -277,17 +278,17 @@
         
         ctx.fillStyle = powerTimer > 0 ? '#3333ff' : n.color;
         ctx.beginPath();
-        ctx.arc(nx, ny, 8, 0, Math.PI * 2);
+        ctx.arc(nx, ny, 7, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.fillStyle = '#fff';
         if (index === 0) {
-          ctx.fillRect(nx - 3, ny - 3, 2, 3);
+          ctx.fillRect(nx - 2, ny - 3, 2, 3);
           ctx.fillRect(nx + 1, ny - 3, 2, 3);
         } else {
           ctx.fillStyle = '#000';
-          ctx.fillRect(nx - 4, ny - 7, 2, 3);
-          ctx.fillRect(nx + 2, ny - 7, 2, 3);
+          ctx.fillRect(nx - 3, ny - 6, 2, 2);
+          ctx.fillRect(nx + 1, ny - 6, 2, 2);
         }
       });
     }
