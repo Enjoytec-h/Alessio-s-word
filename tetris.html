@@ -39,10 +39,15 @@
       width: 100%;
       max-width: 340px;
       display: flex;
-      justify-content: center;
-      align-items: center;
+      flex-direction: column;
       gap: 6px;
       margin-top: 8px;
+    }
+    .touch-row {
+      display: flex;
+      gap: 6px;
+      width: 100%;
+      justify-content: center;
     }
     .touch-btn {
       flex: 1;
@@ -62,6 +67,12 @@
       color: #ff7518;
       font-family: 'Creepster', cursive;
       font-size: 0.9rem;
+    }
+    .drop-btn {
+      flex: 1;
+      height: 40px;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
     }
     .touch-btn:active {
       transform: translateY(2px);
@@ -123,12 +134,16 @@
       </div>
     </div>
 
-    <!-- Controlli Touch Mobile in Orizzontale (Barra Joypad) -->
+    <!-- Controlli Touch Mobile ripristinati con gli ID originali -->
     <div class="touch-controls">
-      <button class="touch-btn icon-btn" id="btn-left"><img src="sinistra.jpg" class="hand-icon" alt="Sinistra"></button>
-      <button class="touch-btn icon-btn" id="btn-down"><img src="sotto.jpg" class="hand-icon" alt="Giù"></button>
-      <button class="touch-btn icon-btn" id="btn-rotate"><img src="sopra.jpg" class="hand-icon" alt="Ruota"></button>
-      <button class="touch-btn icon-btn" id="btn-right"><img src="destra.jpg" class="hand-icon" alt="Destra"></button>
+      <div class="touch-row">
+        <button class="touch-btn icon-btn" id="btn-left"><img src="sinistra.jpg" class="hand-icon" alt="Sinistra"></button>
+        <button class="touch-btn icon-btn" id="btn-right"><img src="destra.jpg" class="hand-icon" alt="Destra"></button>
+        <button class="touch-btn icon-btn" id="btn-rotate"><img src="sopra.jpg" class="hand-icon" alt="Ruota"></button>
+      </div>
+      <div class="touch-row">
+        <button class="touch-btn drop-btn" id="btn-drop">SPACE (DROP)</button>
+      </div>
     </div>
   </div>
 
