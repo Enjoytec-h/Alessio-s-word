@@ -159,15 +159,16 @@ canvas#tetris {
 }
 
 .icon-btn {
-  padding: 4px;
+  padding: 0; /* Rimuove lo spazio interno per far espandere l'immagine */
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden; /* Taglia eventuali sbordature */
 }
 
 .hand-icon {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
+  width: 100%;  /* Occupa tutta la larghezza del bottone */
+  height: 100%; /* Occupa tutta l'altezza del bottone */
+  object-fit: cover; /* Adatta l'immagine coprendo tutto lo spazio disponibile */
   image-rendering: pixelated;
 }
