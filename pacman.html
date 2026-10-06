@@ -25,7 +25,6 @@
       text-decoration: none;
       display: inline-block;
     }
-    /* Riduciamo leggermente il container di gioco per mobile */
     .game-container {
       max-width: 360px;
       padding: 12px;
@@ -55,7 +54,6 @@
       font-size: 0.9rem;
       padding: 8px 2px;
     }
-    /* Controlli touch specifici e compatti */
     .touch-controls {
       gap: 6px;
     }
@@ -174,10 +172,8 @@
             // Candelina dettagliata
             let cx = posX + tileSize / 2;
             let cy = posY + tileSize / 2;
-            // Corpo candela bianco/grigio chiaro
             ctx.fillStyle = '#e0e0e0';
             ctx.fillRect(cx - 2, cy - 3, 4, 8);
-            // Fiamma gialla/arancione
             ctx.fillStyle = '#ff7518';
             ctx.beginPath();
             ctx.arc(cx, cy - 5, 2.5, 0, Math.PI * 2);
@@ -187,31 +183,28 @@
             // Mini-Zucca Magica Power-Up
             let cx = posX + tileSize / 2;
             let cy = posY + tileSize / 2;
-            // Corpo zucca (Arancione)
             ctx.fillStyle = '#ff7518';
             ctx.beginPath();
             ctx.arc(cx, cy + 1, 6, 0, Math.PI * 2);
             ctx.fill();
-            // Picciolo della zucca (Verde scuro)
             ctx.fillStyle = '#38b000';
             ctx.fillRect(cx - 1, cy - 8, 2, 3);
           }
         }
       }
 
-      // Disegna la Mummia (Zombi) con dettagli
+      // Disegna la Mummia (Zombi)
       let mx = mummia.x * tileSize + tileSize/2;
       let my = mummia.y * tileSize + tileSize/2;
       ctx.fillStyle = powerTimer > 0 ? '#00ffcc' : '#d4d4d4';
       ctx.beginPath();
       ctx.arc(mx, my, 7, 0, Math.PI * 2);
       ctx.fill();
-      // Occhietti dello zombi
       ctx.fillStyle = '#000';
       ctx.fillRect(mx - 3, my - 2, 2, 2);
       ctx.fillRect(mx + 1, my - 2, 2, 2);
 
-      // Disegna i Nemici (Scheletro e Pipistrello stilizzati)
+      // Disegna i Nemici
       nemici.forEach((n, index) => {
         let nx = n.x * tileSize + tileSize/2;
         let ny = n.y * tileSize + tileSize/2;
@@ -221,32 +214,15 @@
         ctx.arc(nx, ny, 7, 0, Math.PI * 2);
         ctx.fill();
 
-        // Dettaglio faccina nemico
         ctx.fillStyle = '#fff';
         if (index === 0) {
-          // Scheletro: occhi grandi vuoti
           ctx.fillRect(nx - 3, ny - 2, 2, 3);
           ctx.fillRect(nx + 1, ny - 2, 2, 3);
         } else {
-          // Pipistrello: orecchie a punta accennate
           ctx.fillStyle = '#000';
           ctx.fillRect(nx - 4, ny - 6, 2, 3);
           ctx.fillRect(nx + 2, ny - 6, 2, 3);
         }
-      });
-    }
-      // Mummia
-      ctx.fillStyle = powerTimer > 0 ? '#00ffcc' : '#e0e0e0';
-      ctx.beginPath();
-      ctx.arc(mummia.x * tileSize + tileSize/2, mummia.y * tileSize + tileSize/2, 7, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Nemici
-      nemici.forEach(n => {
-        ctx.fillStyle = powerTimer > 0 ? '#3333ff' : n.color;
-        ctx.beginPath();
-        ctx.arc(n.x * tileSize + tileSize/2, n.y * tileSize + tileSize/2, 7, 0, Math.PI * 2);
-        ctx.fill();
       });
     }
 
@@ -353,6 +329,7 @@
       }
     };
 
+    // Avvio immediato del rendering del labirinto
     draw();
   </script>
 </body>
