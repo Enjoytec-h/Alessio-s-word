@@ -98,22 +98,18 @@
       display: block;
     }
 
-    /* GRIGLIA TOUCH A 4 PULSANTI COMPATTA (Disposizione ergonomica a croce/blocchi) */
+    /* BARRA TOUCH ORIZZONTALE (Stile Joypad) */
     .touch-controls {
       width: 320px;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       margin-top: 4px;
     }
-    .touch-row {
-      display: flex;
-      gap: 8px;
-      width: 100%;
-      justify-content: center;
-    }
     .touch-btn {
+      flex: 1;
+      height: 46px;
       background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
       border: 2px solid #5a3291;
       border-radius: 10px;
@@ -121,8 +117,6 @@
       box-shadow: 0 3px 0 #0a0714;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
-      width: 90px;
-      height: 46px; /* Basso e largo per non allungare la pagina */
       padding: 0;
       display: flex;
       align-items: center;
@@ -135,9 +129,9 @@
       background: #9d4edd;
     }
     .hand-icon {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
       image-rendering: pixelated;
     }
   </style>
@@ -172,21 +166,12 @@
     <!-- Canvas (320x320 px) -->
     <canvas id="pacman-canvas" width="320" height="320"></canvas>
 
-    <!-- Controlli Touch Compatti a blocco (2 sopra/sotto, 2 sinistra/destra) -->
+    <!-- Controlli Touch in Orizzontale (Barra Joypad) -->
     <div class="touch-controls">
-      <!-- Riga Superiore: Sopra -->
-      <div class="touch-row">
-        <button class="touch-btn" id="p-up"><img src="sopra.jpg" class="hand-icon" alt="Sopra"></button>
-      </div>
-      <!-- Riga Centrale: Sinistra e Destra affiancati -->
-      <div class="touch-row" style="justify-content: space-between; padding: 0 20px;">
-        <button class="touch-btn" id="p-left"><img src="sinistra.jpg" class="hand-icon" alt="Sinistra"></button>
-        <button class="touch-btn" id="p-right"><img src="destra.jpg" class="hand-icon" alt="Destra"></button>
-      </div>
-      <!-- Riga Inferiore: Sotto -->
-      <div class="touch-row">
-        <button class="touch-btn" id="p-down"><img src="sotto.jpg" class="hand-icon" alt="Sotto"></button>
-      </div>
+      <button class="touch-btn" id="p-left"><img src="sinistra.jpg" class="hand-icon" alt="Sinistra"></button>
+      <button class="touch-btn" id="p-down"><img src="sotto.jpg" class="hand-icon" alt="Sotto"></button>
+      <button class="touch-btn" id="p-up"><img src="sopra.jpg" class="hand-icon" alt="Sopra"></button>
+      <button class="touch-btn" id="p-right"><img src="destra.jpg" class="hand-icon" alt="Destra"></button>
     </div>
   </div>
 
@@ -194,7 +179,7 @@
     const canvas = document.getElementById('pacman-canvas');
     const ctx = canvas.getContext('2d');
 
-    const tileSize = 20; // 16 celle x 20px = 320x320 px (perfetto nello schermo mobile)
+    const tileSize = 20; // 16 celle x 20px = 320x320 px
     let map = [
       [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
       [1,2,0,0,0,0,1,0,0,1,0,0,0,0,2,1],
