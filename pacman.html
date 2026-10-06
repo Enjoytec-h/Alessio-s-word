@@ -121,7 +121,7 @@
     const canvas = document.getElementById('pacman-canvas');
     const ctx = canvas.getContext('2d');
 
-    const tileSize = 20; // 14 celle x 14 celle = 280x280 px
+    const tileSize = 20; 
     let map = [
       [1,1,1,1,1,1,1,1,1,1,1,1,1,1],
       [1,2,0,0,0,0,1,0,0,0,0,0,2,1],
@@ -155,21 +155,18 @@
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Disegna Labirinto, Candeline e Zucche
       for (let r = 0; r < map.length; r++) {
         for (let c = 0; c < map[r].length; c++) {
           let posX = c * tileSize;
           let posY = r * tileSize;
 
           if (map[r][c] === 1) {
-            // Muro stile gotico/mattone scuro
             ctx.fillStyle = '#221a36';
             ctx.fillRect(posX, posY, tileSize, tileSize);
             ctx.strokeStyle = '#4a2875';
             ctx.strokeRect(posX, posY, tileSize, tileSize);
           } 
           else if (map[r][c] === 0) {
-            // Candelina dettagliata
             let cx = posX + tileSize / 2;
             let cy = posY + tileSize / 2;
             ctx.fillStyle = '#e0e0e0';
@@ -180,7 +177,6 @@
             ctx.fill();
           } 
           else if (map[r][c] === 2) {
-            // Mini-Zucca Magica Power-Up
             let cx = posX + tileSize / 2;
             let cy = posY + tileSize / 2;
             ctx.fillStyle = '#ff7518';
@@ -193,7 +189,6 @@
         }
       }
 
-      // Disegna la Mummia (Zombi)
       let mx = mummia.x * tileSize + tileSize/2;
       let my = mummia.y * tileSize + tileSize/2;
       ctx.fillStyle = powerTimer > 0 ? '#00ffcc' : '#d4d4d4';
@@ -204,7 +199,6 @@
       ctx.fillRect(mx - 3, my - 2, 2, 2);
       ctx.fillRect(mx + 1, my - 2, 2, 2);
 
-      // Disegna i Nemici
       nemici.forEach((n, index) => {
         let nx = n.x * tileSize + tileSize/2;
         let ny = n.y * tileSize + tileSize/2;
@@ -311,7 +305,6 @@
       resetPositions();
     }
 
-    // Touch handlers
     document.getElementById('p-up').onclick = () => { mummia.dx = 0; mummia.dy = -1; };
     document.getElementById('p-down').onclick = () => { mummia.dx = 0; mummia.dy = 1; };
     document.getElementById('p-left').onclick = () => { mummia.dx = -1; mummia.dy = 0; };
@@ -329,7 +322,6 @@
       }
     };
 
-    // Avvio immediato del rendering del labirinto
     draw();
   </script>
 </body>
