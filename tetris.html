@@ -33,66 +33,6 @@
       background: #221a36;
       color: #ffb703;
     }
-
-    /* BARRA TOUCH ORIZZONTALE (Stile Joypad per Tetris) */
-    .touch-controls {
-      width: 100%;
-      max-width: 340px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-top: 8px;
-    }
-    .touch-row {
-      display: flex;
-      gap: 6px;
-      width: 100%;
-      justify-content: center;
-    }
-    .touch-btn {
-      flex: 1;
-      height: 48px;
-      background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
-      border: 2px solid #5a3291;
-      border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 0 3px 0 #0a0714;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      color: #ff7518;
-      font-family: 'Creepster', cursive;
-      font-size: 0.9rem;
-    }
-    .drop-btn {
-      flex: 1;
-      height: 40px;
-      font-size: 0.95rem;
-      letter-spacing: 1px;
-    }
-    .touch-btn:active {
-      transform: translateY(2px);
-      box-shadow: 0 1px 0 #0a0714;
-      background: #9d4edd;
-      color: #fff;
-    }
-    .icon-btn {
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    .hand-icon {
-      width: 80%;
-      height: 80%;
-      object-fit: contain;
-      image-rendering: pixelated;
-    }
   </style>
 </head>
 <body>
@@ -134,12 +74,12 @@
       </div>
     </div>
 
-    <!-- Controlli Touch Mobile ripristinati con gli ID originali -->
+    <!-- Controlli Touch Mobile originali del tuo codice Tetris -->
     <div class="touch-controls">
       <div class="touch-row">
         <button class="touch-btn icon-btn" id="btn-left"><img src="sinistra.jpg" class="hand-icon" alt="Sinistra"></button>
         <button class="touch-btn icon-btn" id="btn-right"><img src="destra.jpg" class="hand-icon" alt="Destra"></button>
-        <button class="touch-btn icon-btn" id="btn-rotate"><img src="sopra.jpg" class="hand-icon" alt="Ruota"></button>
+        <button class="touch-btn" id="btn-rotate">🔄</button>
       </div>
       <div class="touch-row">
         <button class="touch-btn drop-btn" id="btn-drop">SPACE (DROP)</button>
