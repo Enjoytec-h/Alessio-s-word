@@ -88,39 +88,54 @@
       display: block;
     }
 
+    /* Pulsanti Touch Mobile a due colonne affiancate */
     .touch-controls {
-      margin-top: 10px;
       width: 100%;
       max-width: 336px;
       display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .touch-row {
-      display: flex;
       justify-content: center;
-      gap: 10px;
-      width: 100%;
+      gap: 12px;
+      margin-top: 10px;
     }
-    .touch-btn {
-      background: #221a36;
-      border: 2px solid #4a2875;
-      color: #ff7518;
-      font-size: 1.2rem;
-      border-radius: 8px;
+
+    .touch-column {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
       flex: 1;
-      padding: 12px 0;
-      cursor: pointer;
-      text-align: center;
     }
+
+    .touch-btn {
+      width: 100%;
+      background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
+      border: 2px solid #5a3291;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #0a0714, 0 0 10px rgba(157, 78, 221, 0.2);
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      height: 60px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .touch-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #0a0714;
+      background: #9d4edd;
+    }
+
     .icon-btn {
       padding: 0;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      height: 48px;
     }
+
     .hand-icon {
       width: 100%;
       height: 100%;
@@ -159,26 +174,26 @@
     <!-- Canvas allargato (16x16 celle da 21px = 336x336 px) -->
     <canvas id="pacman-canvas" width="336" height="336"></canvas>
 
-   <!-- Controlli Touch Mobile (Disposizione a coppie bilanciate) -->
+    <!-- Controlli Touch Mobile a due colonne (Sinistra/Sotto a sinistra, Destra/Sopra a destra) -->
     <div class="touch-controls">
-      <!-- Colonna Sinistra: Sinistra e Sotto -->
+      <!-- Colonna Sinistra -->
       <div class="touch-column">
-        <button class="touch-btn" id="p-left"><img src="sinistra.jpg" class="hand-icon" alt="Sinistra"></button>
-        <button class="touch-btn" id="p-down"><img src="sotto.jpg" class="hand-icon" alt="Sotto"></button>
+        <button class="touch-btn icon-btn" id="p-left"><img src="sinistra.jpg" class="hand-icon" alt="Sinistra"></button>
+        <button class="touch-btn icon-btn" id="p-down"><img src="sotto.jpg" class="hand-icon" alt="Sotto"></button>
       </div>
-
-      <!-- Colonna Destra: Destra e Sopra -->
+      <!-- Colonna Destra -->
       <div class="touch-column">
-        <button class="touch-btn" id="p-right"><img src="destra.jpg" class="hand-icon" alt="Destra"></button>
-        <button class="touch-btn" id="p-up"><img src="sopra.jpg" class="hand-icon" alt="Sopra"></button>
+        <button class="touch-btn icon-btn" id="p-right"><img src="destra.jpg" class="hand-icon" alt="Destra"></button>
+        <button class="touch-btn icon-btn" id="p-up"><img src="sopra.jpg" class="hand-icon" alt="Sopra"></button>
       </div>
     </div>
+  </div>
 
   <script>
     const canvas = document.getElementById('pacman-canvas');
     const ctx = canvas.getContext('2d');
 
-    const tileSize = 21; // 16 celle x 16 celle = 336x336 px
+    const tileSize = 21; 
     let map = [
       [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
       [1,2,0,0,0,0,1,0,0,1,0,0,0,0,2,1],
