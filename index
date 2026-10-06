@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alessio's Arcade - Halloween Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Stili specifici extra per la Home Hub */
+        .hub-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .subtitle {
+            color: #a38ec2;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: -10px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .game-card {
+            background: linear-gradient(135deg, #181528 0%, #0d0b18 100%);
+            border: 2px solid #3c1e5d;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            text-decoration: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card:hover {
+            border-color: #ff7518;
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(255, 117, 24, 0.4), inset 0 0 10px rgba(157, 78, 221, 0.2);
+        }
+
+        .game-card.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            border-style: dashed;
+        }
+        .game-card.disabled:hover {
+            transform: none;
+            border-color: #3c1e5d;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+        }
+
+        .game-icon {
+            font-size: 3rem;
+            background: #08070c;
+            border: 2px solid #4a2875;
+            border-radius: 12px;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 10px #000;
+        }
+
+        .game-info {
+            text-align: left;
+            flex: 1;
+        }
+
+        .game-title {
+            font-family: 'Creepster', cursive;
+            font-size: 1.5rem;
+            color: #ff7518;
+            text-shadow: 0 0 8px rgba(255, 117, 24, 0.4);
+            margin-bottom: 4px;
+        }
+
+        .game-desc {
+            font-size: 0.8rem;
+            color: #a38ec2;
+        }
+
+        .badge-soon {
+            background: #3c1e5d;
+            color: #ff9d5c;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hub-container">
+        <div class="logo-container">
+            <h1 class="halloween-title">Alessio's World</h1>
+            <p class="subtitle">🎃 Halloween Arcade Hub 🎃</p>
+        </div>
+
+        <div class="games-grid">
+            <!-- GIOCO 1: TETRIS (GIÀ FATTO) -->
+            <a href="tetris.html" class="game-card">
+                <div class="game-icon">🧱</div>
+                <div class="game-info">
+                    <div class="game-title">Word Tetris</div>
+                    <div class="game-desc">Incastra i blocchi spettrali nel buio della cripta.</div>
+                </div>
+            </a>
+
+            <!-- GIOCO 2: PACMAN (DA FARE) -->
+            <a href="#" class="game-card disabled" onclick="alert('Il Pacman di Halloween è in fase di incubazione! Presto disponibile.'); return false;">
+                <div class="game-icon">👻</div>
+                <div class="game-info">
+                    <div class="game-title">Ghost Pacman <span class="badge-soon">In Arrivo</span></div>
+                    <div class="game-desc">fuggi dai fantasmi e mangia le pillole magiche.</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>
