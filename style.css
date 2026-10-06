@@ -113,36 +113,28 @@ canvas#tetris {
   box-shadow: 0 1px 0 #4a1a00;
 }
 
-/* Pulsanti Touch Mobile a due colonne affiancate */
+/* Pulsanti Touch Mobile in Orizzontale (Stile barra joypad) */
 .touch-controls {
   width: 100%;
   display: flex;
   justify-content: center;
-  gap: 12px;
+  align-items: center;
+  gap: 8px;
   margin-top: 5px;
 }
 
-/* Ogni colonna rappresenta un lato (Sinistra / Destra) */
-.touch-column {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1;
-  max-width: 180px;
-}
-
 .touch-btn {
-  width: 100%;
+  flex: 1;
+  height: 50px;
   background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
   color: #ff7518;
   border: 2px solid #5a3291;
   padding: 0;
-  border-radius: 12px;
+  border-radius: 10px;
   cursor: pointer;
-  box-shadow: 0 4px 0 #0a0714, 0 0 10px rgba(157, 78, 221, 0.2);
+  box-shadow: 0 3px 0 #0a0714, 0 0 10px rgba(157, 78, 221, 0.2);
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  height: 55px; /* Altezza fissa per mantenere le mani perfette */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -151,7 +143,7 @@ canvas#tetris {
 
 .touch-btn:active {
   transform: translateY(2px);
-  box-shadow: 0 2px 0 #0a0714;
+  box-shadow: 0 1px 0 #0a0714;
   background: #9d4edd;
   color: #fff;
 }
@@ -165,8 +157,8 @@ canvas#tetris {
 }
 
 .hand-icon {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
   image-rendering: pixelated;
 }
