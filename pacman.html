@@ -7,55 +7,111 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@700&display=swap" rel="stylesheet">
   <style>
+    .game-container {
+      max-width: 360px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
     .back-home-container {
       margin-bottom: 5px;
       text-align: left;
       width: 100%;
-      max-width: 320px;
     }
     .back-btn {
       background: #141026;
       border: 2px solid #38285c;
       color: #ff7518;
       font-family: 'Creepster', cursive;
-      font-size: 1rem;
-      padding: 5px 12px;
+      font-size: 0.9rem;
+      padding: 4px 10px;
       border-radius: 6px;
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
     }
-    .game-container {
-      max-width: 360px;
-      padding: 12px;
-    }
     .halloween-title {
-      font-size: 1.8rem;
+      font-size: 1.5rem;
+      margin: 5px 0;
+      text-align: center;
     }
+    
+    /* Pannello statistiche e play in alto, disposti in orizzontale */
+    .top-hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 336px;
+      background: #141026;
+      border: 2px solid #38285c;
+      border-radius: 8px;
+      padding: 6px 10px;
+      margin-bottom: 8px;
+      box-sizing: border-box;
+    }
+    .hud-stat {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+    }
+    .hud-stat label {
+      font-size: 0.65rem;
+      color: #a0a0ff;
+      font-family: 'Roboto', sans-serif;
+    }
+    .hud-stat span {
+      font-size: 0.9rem;
+      color: #fff;
+      font-weight: bold;
+    }
+    .gothic-btn-top {
+      background: #ff7518;
+      color: #141026;
+      border: none;
+      font-family: 'Creepster', cursive;
+      font-size: 1rem;
+      padding: 4px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* Canvas ingrandito */
     canvas#pacman-canvas {
       background-color: #0b0914;
       border: 3px solid #4a2875;
       border-radius: 8px;
       box-shadow: inset 0 0 15px #000;
-      width: 280px;
-      height: 280px;
+      width: 336px;
+      height: 336px;
+      display: block;
     }
-    .sidebar-panel {
-      width: 80px;
-      gap: 6px;
-    }
-    .stat-box {
-      padding: 4px;
-    }
-    .stat-box span {
-      font-size: 0.95rem;
-    }
-    .gothic-btn {
-      font-size: 0.9rem;
-      padding: 8px 2px;
-    }
+
     .touch-controls {
+      margin-top: 10px;
+      width: 100%;
+      max-width: 336px;
+      display: flex;
+      flex-direction: column;
       gap: 6px;
+    }
+    .touch-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+    }
+    .touch-btn {
+      background: #221a36;
+      border: 2px solid #4a2875;
+      color: #ff7518;
+      font-size: 1.2rem;
+      border-radius: 8px;
+      flex: 1;
+      padding: 12px 0;
+      cursor: pointer;
+      text-align: center;
     }
     .icon-btn {
       padding: 0;
@@ -63,7 +119,7 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      height: 50px;
+      height: 48px;
     }
     .hand-icon {
       width: 100%;
@@ -80,38 +136,37 @@
     </div>
 
     <div class="logo-container">
-      <h1 class="halloween-title">SPOOKY<br>PAC-MAN 🎃</h1>
+      <h1 class="halloween-title">SPOOKY PAC-MAN 🎃</h1>
     </div>
 
-    <div class="main-layout">
-      <!-- Canvas ridimensionato per smartphone -->
-      <canvas id="pacman-canvas" width="280" height="280"></canvas>
-
-      <div class="sidebar-panel">
-        <div class="stat-box">
-          <label>SCORE</label>
-          <span id="score">0</span>
-        </div>
-        <div class="stat-box">
-          <label>LEVEL</label>
-          <span id="level">1</span>
-        </div>
-        <div class="stat-box">
-          <label>LIVES</label>
-          <span id="lives" style="font-size: 0.7rem;">🦇🦇🦇</span>
-        </div>
-        <button id="start-pacman-btn" class="gothic-btn">PLAY</button>
+    <!-- HUD Superiore con Score, Level, Lives e Play -->
+    <div class="top-hud">
+      <div class="hud-stat">
+        <label>SCORE</label>
+        <span id="score">0</span>
       </div>
+      <div class="hud-stat">
+        <label>LEVEL</label>
+        <span id="level">1</span>
+      </div>
+      <div class="hud-stat">
+        <label>LIVES</label>
+        <span id="lives" style="font-size: 0.65rem;">🦇🦇🦇</span>
+      </div>
+      <button id="start-pacman-btn" class="gothic-btn-top">PLAY</button>
     </div>
+
+    <!-- Canvas allargato (16x16 celle da 21px = 336x336 px) -->
+    <canvas id="pacman-canvas" width="336" height="336"></canvas>
 
     <!-- Controlli Touch Mobile -->
     <div class="touch-controls">
       <div class="touch-row">
-        <button class="touch-btn" id="p-up" style="padding: 10px 0;">⬆️</button>
+        <button class="touch-btn" id="p-up">⬆️</button>
       </div>
       <div class="touch-row">
         <button class="touch-btn icon-btn" id="p-left"><img src="sinistra.jpg" class="hand-icon" alt="Sinistra"></button>
-        <button class="touch-btn" id="p-down" style="padding: 10px 0;">⬇️</button>
+        <button class="touch-btn" id="p-down">⬇️</button>
         <button class="touch-btn icon-btn" id="p-right"><img src="destra.jpg" class="hand-icon" alt="Destra"></button>
       </div>
     </div>
@@ -121,21 +176,21 @@
     const canvas = document.getElementById('pacman-canvas');
     const ctx = canvas.getContext('2d');
 
-    const tileSize = 20; 
+    const tileSize = 21; // 16 celle x 16 celle = 336x336 px
     let map = [
-      [1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-      [1,2,0,0,0,0,1,0,0,0,0,0,2,1],
-      [1,0,1,1,0,1,1,1,0,1,1,0,1,1],
-      [1,0,0,0,0,0,0,0,0,0,0,0,0,1],
-      [1,0,1,1,0,1,0,0,1,0,1,1,0,1],
-      [1,0,0,0,0,1,1,1,1,0,0,0,0,1],
-      [1,1,1,1,0,0,0,0,0,0,1,1,1,1],
-      [0,0,0,1,0,1,1,1,1,0,1,0,0,0],
-      [1,1,1,1,0,1,0,0,1,0,1,1,1,1],
-      [1,0,0,0,0,0,0,0,0,0,0,0,0,1],
-      [1,0,1,1,0,1,0,0,1,0,1,1,0,1],
-      [1,2,0,1,0,0,0,0,0,0,1,0,2,1],
-      [1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,2,0,0,0,0,1,0,0,1,0,0,0,0,2,1],
+      [1,0,1,1,0,1,1,1,1,1,1,0,1,1,0,1],
+      [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+      [1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1],
+      [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+      [1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1],
+      [0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0],
+      [1,1,1,1,0,1,1,0,0,1,1,0,1,1,1,1],
+      [1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1],
+      [1,0,1,1,0,1,1,1,1,1,1,0,1,1,0,1],
+      [1,2,0,1,0,0,0,0,0,0,0,0,1,0,2,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
     ];
 
     let originalMap = JSON.parse(JSON.stringify(map));
@@ -146,10 +201,10 @@
     let isRunning = false;
     let powerTimer = 0;
 
-    let mummia = { x: 6, y: 9, dx: 0, dy: 0 };
+    let mummia = { x: 7, y: 9, dx: 0, dy: 0 };
     let nemici = [
-      { x: 6, y: 6, dx: 1, dy: 0, color: '#a0a0ff' },
-      { x: 7, y: 6, dx: -1, dy: 0, color: '#ff4444' }
+      { x: 7, y: 6, dx: 1, dy: 0, color: '#a0a0ff' },
+      { x: 8, y: 6, dx: -1, dy: 0, color: '#ff4444' }
     ];
 
     function draw() {
@@ -181,10 +236,10 @@
             let cy = posY + tileSize / 2;
             ctx.fillStyle = '#ff7518';
             ctx.beginPath();
-            ctx.arc(cx, cy + 1, 6, 0, Math.PI * 2);
+            ctx.arc(cx, cy + 1, 7, 0, Math.PI * 2);
             ctx.fill();
             ctx.fillStyle = '#38b000';
-            ctx.fillRect(cx - 1, cy - 8, 2, 3);
+            ctx.fillRect(cx - 1, cy - 9, 2, 3);
           }
         }
       }
@@ -193,11 +248,11 @@
       let my = mummia.y * tileSize + tileSize/2;
       ctx.fillStyle = powerTimer > 0 ? '#00ffcc' : '#d4d4d4';
       ctx.beginPath();
-      ctx.arc(mx, my, 7, 0, Math.PI * 2);
+      ctx.arc(mx, my, 8, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#000';
-      ctx.fillRect(mx - 3, my - 2, 2, 2);
-      ctx.fillRect(mx + 1, my - 2, 2, 2);
+      ctx.fillRect(mx - 3, my - 3, 2, 2);
+      ctx.fillRect(mx + 1, my - 3, 2, 2);
 
       nemici.forEach((n, index) => {
         let nx = n.x * tileSize + tileSize/2;
@@ -205,17 +260,17 @@
         
         ctx.fillStyle = powerTimer > 0 ? '#3333ff' : n.color;
         ctx.beginPath();
-        ctx.arc(nx, ny, 7, 0, Math.PI * 2);
+        ctx.arc(nx, ny, 8, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.fillStyle = '#fff';
         if (index === 0) {
-          ctx.fillRect(nx - 3, ny - 2, 2, 3);
-          ctx.fillRect(nx + 1, ny - 2, 2, 3);
+          ctx.fillRect(nx - 3, ny - 3, 2, 3);
+          ctx.fillRect(nx + 1, ny - 3, 2, 3);
         } else {
           ctx.fillStyle = '#000';
-          ctx.fillRect(nx - 4, ny - 6, 2, 3);
-          ctx.fillRect(nx + 2, ny - 6, 2, 3);
+          ctx.fillRect(nx - 4, ny - 7, 2, 3);
+          ctx.fillRect(nx + 2, ny - 7, 2, 3);
         }
       });
     }
@@ -257,7 +312,7 @@
 
         if (n.x === mummia.x && n.y === mummia.y) {
           if (powerTimer > 0) {
-            n.x = 6; n.y = 6;
+            n.x = 7; n.y = 6;
             score += 200;
           } else {
             lives--;
@@ -291,9 +346,9 @@
     }
 
     function resetPositions() {
-      mummia.x = 6; mummia.y = 9; mummia.dx = 0; mummia.dy = 0;
-      nemici[0].x = 6; nemici[0].y = 6;
-      nemici[1].x = 7; nemici[1].y = 6;
+      mummia.x = 7; mummia.y = 9; mummia.dx = 0; mummia.dy = 0;
+      nemici[0].x = 7; nemici[0].y = 6;
+      nemici[1].x = 8; nemici[1].y = 6;
     }
 
     function resetGame() {
