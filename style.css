@@ -113,42 +113,36 @@ canvas#tetris {
   box-shadow: 0 1px 0 #4a1a00;
 }
 
-/* Pulsanti Touch Mobile a due colonne */
+/* Pulsanti Touch Mobile a due colonne affiancate */
 .touch-controls {
   width: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  justify-content: center;
+  gap: 12px;
   margin-top: 5px;
 }
 
-/* Griglia per affiancare i comandi a coppie */
-.touch-grid {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-}
-
+/* Ogni colonna rappresenta un lato (Sinistra / Destra) */
 .touch-column {
   display: flex;
   flex-direction: column;
   gap: 8px;
   flex: 1;
+  max-width: 180px;
 }
 
 .touch-btn {
-  flex: 1;
+  width: 100%;
   background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
   color: #ff7518;
   border: 2px solid #5a3291;
-  padding: 0; /* Azzerato per far spazio all'immagine */
-  font-size: 1.3rem;
+  padding: 0;
   border-radius: 12px;
   cursor: pointer;
   box-shadow: 0 4px 0 #0a0714, 0 0 10px rgba(157, 78, 221, 0.2);
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  height: 60px; /* Altezza fissa per mantenere i bottoni quadrati/rettangolari perfetti */
+  height: 55px; /* Altezza fissa per mantenere le mani perfette */
   display: flex;
   align-items: center;
   justify-content: center;
