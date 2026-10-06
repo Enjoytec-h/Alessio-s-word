@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
   <title>Spooky Pac-Man 🎃 - Alessio's World</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@700&display=swap" rel="stylesheet">
@@ -22,23 +22,29 @@
     }
   </script>
   <style>
-    body {
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
       margin: 0;
-      padding: 4px;
-      min-height: 100vh;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #08070c;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #08070c;
     }
     .game-container {
-      max-width: 340px;
-      padding: 6px;
+      width: 100vw;
+      height: 100vh;
+      max-width: 450px; /* Limite massimo per tablet o schermi larghi */
+      padding: 8px;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      gap: 5px;
-      box-sizing: border-box;
     }
     .back-home-container {
       text-align: left;
@@ -49,15 +55,15 @@
       border: 2px solid #38285c;
       color: #ff7518;
       font-family: 'Creepster', cursive;
-      font-size: 0.85rem;
-      padding: 4px 10px;
+      font-size: 0.8rem;
+      padding: 4px 8px;
       border-radius: 6px;
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
     }
     .halloween-title {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       margin: 2px 0;
       text-align: center;
       color: #ff7518;
@@ -73,8 +79,7 @@
       background: #141026;
       border: 2px solid #38285c;
       border-radius: 8px;
-      padding: 5px 8px;
-      box-sizing: border-box;
+      padding: 6px 10px;
     }
     .hud-stat {
       text-align: center;
@@ -82,12 +87,12 @@
       flex-direction: column;
     }
     .hud-stat label {
-      font-size: 0.6rem;
+      font-size: 0.55rem;
       color: #a0a0ff;
       font-family: 'Roboto', sans-serif;
     }
     .hud-stat span {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: #fff;
       font-weight: bold;
     }
@@ -96,21 +101,31 @@
       color: #141026;
       border: none;
       font-family: 'Creepster', cursive;
-      font-size: 0.9rem;
-      padding: 3px 10px;
+      font-size: 0.85rem;
+      padding: 4px 12px;
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
     }
 
-    /* Canvas ingrandito e proporzionato allo schermo */
+    /* Canvas dinamico a tutto schermo */
+    .canvas-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      min-height: 0;
+      padding: 4px 0;
+    }
     canvas#pacman-canvas {
       background-color: #0b0914;
       border: 2px solid #4a2875;
       border-radius: 6px;
       box-shadow: inset 0 0 10px #000;
-      width: 336px;
-      height: 336px;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
       display: block;
     }
 
@@ -120,17 +135,17 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 6px;
-      margin-top: 2px;
+      gap: 8px;
+      margin-bottom: 4px;
     }
     .touch-btn {
       flex: 1;
-      height: 46px;
+      height: 54px;
       background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
       border: 2px solid #5a3291;
       border-radius: 10px;
       cursor: pointer;
-      box-shadow: 0 3px 0 #0a0714;
+      box-shadow: 0 4px 0 #0a0714;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
       padding: 0;
@@ -140,13 +155,13 @@
       overflow: hidden;
     }
     .touch-btn:active {
-      transform: translateY(2px);
+      transform: translateY(3px);
       box-shadow: 0 1px 0 #0a0714;
       background: #9d4edd;
     }
     .hand-icon {
-      width: 75%;
-      height: 75%;
+      width: 70%;
+      height: 70%;
       object-fit: contain;
       image-rendering: pixelated;
     }
@@ -156,9 +171,6 @@
   <div class="game-container">
     <div class="back-home-container">
       <a href="index.html" class="back-btn">⬅ TORNA ALLA HOME</a>
-    </div>
-
-    <div class="logo-container">
       <h1 class="halloween-title">SPOOKY PAC-MAN 🎃</h1>
     </div>
 
@@ -179,8 +191,10 @@
       <button id="start-pacman-btn" class="gothic-btn-top">PLAY</button>
     </div>
 
-    <!-- Canvas ottimizzato (14x14 celle da 24px = 336x336 px) -->
-    <canvas id="pacman-canvas" width="336" height="336"></canvas>
+    <!-- Canvas contenuto in un wrapper flessibile -->
+    <div class="canvas-wrapper">
+      <canvas id="pacman-canvas"></canvas>
+    </div>
 
     <!-- Controlli Touch in Orizzontale (Barra Joypad Unica) -->
     <div class="touch-controls">
@@ -195,7 +209,12 @@
     const canvas = document.getElementById('pacman-canvas');
     const ctx = canvas.getContext('2d');
 
-    const tileSize = 24; // 14x14 celle = 336x336 px
+    // Risoluzione interna fissa del labirinto (14x14 celle da 24px = 336x336 px interni)
+    const internalSize = 336;
+    canvas.width = internalSize;
+    canvas.height = internalSize;
+    const tileSize = 24;
+
     let map = [
       [1,1,1,1,1,1,1,1,1,1,1,1,1,1],
       [1,2,0,0,0,0,1,1,0,0,0,0,2,1],
@@ -382,7 +401,7 @@
 
     document.getElementById('p-up').onclick = () => { mummia.dx = 0; mummia.dy = -1; };
     document.getElementById('p-down').onclick = () => { mummia.dx = 0; mummia.dy = 1; };
-    document.getElementById('p-left').onclick = () => { mummia.dx = -1; mummia.dy = 0; };
+    document.getElementById('p-left').onclick = () =>5 { mummia.dx = -1; mummia.dy = 0; };
     document.getElementById('p-right').onclick = () => { mummia.dx = 1; mummia.dy = 0; };
 
     document.getElementById('start-pacman-btn').onclick = () => {
