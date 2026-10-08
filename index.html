@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Alessio's World 🎃 Halloween Arcade</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@700&display=swap" rel="stylesheet">
@@ -85,99 +85,128 @@
   </script>
 
   <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      min-height: 100dvh;
       margin: 0;
       background: #0b0914;
       font-family: 'Roboto', sans-serif;
       color: #fff;
       overflow-x: hidden;
+      user-select: none;
+      -webkit-user-select: none;
     }
+
     .home-container {
       text-align: center;
       max-width: 600px;
-      padding: 20px;
+      width: 100%;
+      padding: 20px 15px;
     }
+
     .world-title {
       font-family: 'Creepster', cursive;
-      font-size: 3.5rem;
+      font-size: 3rem;
       color: #ff7518;
       text-shadow: 0 0 15px rgba(255, 117, 24, 0.6), 0 0 30px #000;
-      margin-bottom: 10px;
+      margin: 0 0 5px 0;
       letter-spacing: 2px;
     }
+
     .world-subtitle {
-      font-size: 1.1rem;
+      font-size: 1rem;
       color: #a0a0b0;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
       text-transform: uppercase;
       letter-spacing: 3px;
     }
+
     .games-grid {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 16px;
       width: 100%;
     }
+
     .game-card {
       background: #141026;
       border: 2px solid #38285c;
       border-radius: 12px;
-      padding: 20px;
+      padding: 16px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
       transition: all 0.3s ease;
       box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      position: relative;
     }
+
     .game-card:hover {
       border-color: #ff7518;
       box-shadow: 0 0 20px rgba(255, 117, 24, 0.3);
-      transform: translateY(-3px);
+      transform: translateY(-2px);
     }
+
+    .game-info {
+      flex: 1;
+      text-align: left;
+    }
+
     .game-info h2 {
       font-family: 'Creepster', cursive;
-      font-size: 2rem;
+      font-size: 1.8rem;
       color: #ffb703;
-      margin: 0 0 5px 0;
+      margin: 0 0 4px 0;
       letter-spacing: 1px;
-      text-align: left;
     }
+
     .game-info p {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #8c889e;
       margin: 0;
-      text-align: left;
+      line-height: 1.2;
     }
+
     .play-link-btn {
       background: linear-gradient(135deg, #ff7518, #e55a00);
       color: #fff;
       font-family: 'Creepster', cursive;
-      font-size: 1.4rem;
-      padding: 10px 25px;
+      font-size: 1.3rem;
+      padding: 10px 20px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       text-decoration: none;
-      box-shadow: 0 4px 10px rgba(255, 117, 24,.4);
+      box-shadow: 0 4px 10px rgba(255, 117, 24, .4);
       transition: all 0.2s ease;
       letter-spacing: 1px;
+      display: inline-block;
+      white-space: nowrap;
+      position: relative;
+      z-index: 2;
+      touch-action: manipulation;
     }
-    .play-link-btn:hover {
+
+    .play-link-btn:active {
+      transform: scale(0.95);
       background: linear-gradient(135deg, #ff8c38, #ff7518);
-      box-shadow: 0 0 15px rgba(255, 117, 24, 0.8);
-      transform: scale(1.05);
     }
   </style>
 </head>
 <body>
 
   <div class="home-container">
-    <h1 class="world-title">ALESSIO'S WORLD 🎃</h1>
+    <h1 class="world-title">ALESSIO's WORLD 🎃</h1>
     <p class="world-subtitle">Dark Arcade & Horror Games</p>
 
     <div class="games-grid">
