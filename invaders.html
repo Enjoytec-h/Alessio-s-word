@@ -29,7 +29,7 @@
       width: 100%;
       height: 100%;
       max-width: 420px;
-      padding: 6px 10px env(safe-area-inset-bottom, 6px) 10px;
+      padding: 6px 10px calc(12px + env(safe-area-inset-bottom, 0px)) 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -54,7 +54,7 @@
       display: inline-block;
     }
     .halloween-title {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       margin: 2px 0;
       text-align: center;
       color: #ff7518;
@@ -107,7 +107,7 @@
       align-items: center;
       width: 100%;
       min-height: 0;
-      padding: 2px 0;
+      padding: 4px 0;
       position: relative;
     }
     canvas#invaders-canvas {
@@ -124,16 +124,17 @@
       touch-action: none;
     }
 
-    /* CONTROLLI TOUCH JOYSTICK + SPARO CONSOLE STYLE */
+    /* BARRA CONTROLLI SOLLEVATA E PIÙ VISIBILE */
     .touch-controls {
       width: 100%;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       flex-shrink: 0;
+      margin-top: 4px;
       margin-bottom: 4px;
-      padding: 0 4px;
+      padding: 0 2px;
     }
     
     .joystick-container {
@@ -144,7 +145,7 @@
 
     .touch-btn {
       flex: 1;
-      height: 52px;
+      height: 46px;
       background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
       border: 1.5px solid #5a3291;
       border-radius: 8px;
@@ -164,10 +165,10 @@
       color: #141026;
       border-color: #ffaa66;
       flex: 1.2;
-      height: 52px;
-      font-size: 1.3rem;
+      height: 46px;
+      font-size: 1.2rem;
       font-weight: bold;
-      border-radius: 10px;
+      border-radius: 8px;
     }
 
     .touch-btn:active, .touch-btn.pressed, .touch-btn-fire:active {
@@ -180,7 +181,7 @@
 </head>
 <body>
 
-  <!-- TRACCIA AUDIO RICHIESTA -->
+  <!-- TRACCIA AUDIO -->
   <audio id="bg-music" loop preload="auto">
     <source src="spooky_invaders_ita.mp3" type="audio/mpeg">
   </audio>
@@ -212,7 +213,7 @@
       <canvas id="invaders-canvas"></canvas>
     </div>
 
-    <!-- CONTROLLI: JOYSTICK FRECCE A SINISTRA E TASTO SPARA A DESTRA -->
+    <!-- CONTROLLI TOUCH RI-POSIZIONATI -->
     <div class="touch-controls">
       <div class="joystick-container">
         <button class="touch-btn" id="btn-left">◀</button>
@@ -275,9 +276,9 @@
           let health = 1;
           let icon = '🎃';
           
-          if (r === 0) { health = 3; icon = '🦇'; }      // Pipistrello Re
-          else if (r === 1) { health = 2; icon = '👻'; } // Fantasma
-          else { health = 1; icon = '🎃'; }               // Zucca
+          if (r === 0) { health = 3; icon = '🦇'; }
+          else if (r === 1) { health = 2; icon = '👻'; }
+          else { health = 1; icon = '🎃'; }
 
           monsters.push({
             x: startX + c * spacingX,
@@ -507,7 +508,7 @@
       }
     }
 
-    // CONTROLLI BOTTONI TOUCH (JOYSTICK SOTTO)
+    // EVENTI TOUCH PUSANTI
     const btnLeft = document.getElementById('btn-left');
     const btnRight = document.getElementById('btn-right');
     const btnFire = document.getElementById('btn-fire');
@@ -526,7 +527,7 @@
     btnRight.addEventListener('mouseup', () => rightPressed = false);
     btnFire.addEventListener('click', () => shoot());
 
-    // MOVIMENTO TRAMITE TRASCINAMENTO SULLO SCHERMO (DITO)
+    // MOVIMENTO DITO SU CANVAS
     canvas.addEventListener('touchmove', (e) => {
       let rect = canvas.getBoundingClientRect();
       let touchX = e.touches[0].clientX - rect.left;
@@ -534,7 +535,7 @@
       player.x = (touchX * scale) - (player.w / 2);
     });
 
-    // DOPPIO TOCCO SICURO (SOLO SULLA PARTE SUPERIORE DEL CANVAS)
+    // DOPPIO TOCCO ZONA SUPERIORE PER PAUSA/PLAY
     let lastTapTime = 0;
     canvas.addEventListener('touchstart', (e) => {
       let rect = canvas.getBoundingClientRect();
@@ -542,7 +543,6 @@
       let currentTime = new Date().getTime();
       let tapLength = currentTime - lastTapTime;
       
-      // Il doppio tocco attiva Pausa/Play solo toccando la metà superiore dello schermo (evita conflitti col movimento)
       if (tapLength < 300 && tapLength > 0 && touchY < rect.height * 0.3) {
         e.preventDefault();
         togglePlayState();
