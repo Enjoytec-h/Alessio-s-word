@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, viewport-fit=cover">
+  <title>Spooky Pinball 🎃 - Alessio's World</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@700&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#141026">
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      background: #08070c;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+    }
+    .game-container {
+      width: 100%;
+      height: 100%;
+      max-width: 420px;
+      padding: 6px 10px calc(10px + env(safe-area-inset-bottom, 0px)) 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+    .back-home-container {
+      text-align: left;
+      width: 100%;
+      flex-shrink: 0;
+    }
+    .back-btn {
+      background: #141026;
+      border: 1.5px solid #38285c;
+      color: #ff7518;
+      font-family: 'Creepster', cursive;
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .halloween-title {
+      font-size: 1.1rem;
+      margin: 2px 0;
+      text-align: center;
+      color: #ff7518;
+      font-family: 'Creepster', cursive;
+      flex-shrink: 0;
+    }
+    
+    .top-hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      background: #141026;
+      border: 1.5px solid #38285c;
+      border-radius: 6px;
+      padding: 4px 10px;
+      flex-shrink: 0;
+    }
+    .hud-stat {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+    }
+    .hud-stat label {
+      font-size: 0.55rem;
+      color: #a0a0ff;
+      font-family: 'Roboto', sans-serif;
+    }
+    .hud-stat span {
+      font-size: 0.8rem;
+      color: #fff;
+      font-weight: bold;
+    }
+    .gothic-btn-top {
+      background: #ff7518;
+      color: #141026;
+      border: none;
+      font-family: 'Creepster', cursive;
+      font-size: 0.85rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .canvas-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      min-height: 0;
+      padding: 2px 0;
+      position: relative;
+    }
+    canvas#flipper-canvas {
+      background-color: #0b0914;
+      border: 2px solid #4a2875;
+      border-radius: 6px;
+      box-shadow: inset 0 0 12px #000;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+      touch-action: none;
+    }
+
+    /* CONTROLLI FLIPPER */
+    .flipper-controls {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      margin-top: 4px;
+      padding: 0 4px;
+    }
+    .flipper-btn {
+      flex: 1;
+      height: 50px;
+      background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
+      border: 2px solid #5a3291;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 3px 0 #0a0714;
+      touch-action: manipulation;
+      color: #ff7518;
+      font-family: 'Creepster', cursive;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .flipper-btn-launch {
+      background: linear-gradient(180deg, #ff7518 0%, #9e3d00 100%);
+      color: #141026;
+      border-color: #ffaa66;
+      flex: 0.8;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+    .flipper-btn:active, .flipper-btn.pressed {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #0a0714;
+      background: #9d4edd;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TRACCIA AUDIO -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="spooky_flipper.mp3" type="audio/mpeg">
+    <source src="spooky_breakout.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="game-container">
+    <div class="back-home-container">
+      <a href="index.html" class="back-btn">⬅ TORNA ALLA HOME</a>
+    </div>
+
+    <h1 class="halloween-title">SPOOKY PINBALL 🎃</h1>
+
+    <div class="top-hud">
+      <div class="hud-stat">
+        <label>SCORE</label>
+        <span id="score">0</span>
+      </div>
+      <div class="hud-stat">
+        <label>MULT</label>
+        <span id="multiplier" style="color: #00ffcc;">1X</span>
+      </div>
+      <div class="hud-stat">
+        <label>BALLS</label>
+        <span id="balls" style="font-size: 0.7rem;">🔮🔮🔮</span>
+      </div>
+      <button id="start-btn" class="gothic-btn-top">PLAY</button>
+    </div>
+
+    <div class="canvas-wrapper">
+      <canvas id="flipper-canvas"></canvas>
+    </div>
+
+    <div class="flipper-controls">
+      <button class="flipper-btn" id="btn-left">◀ FLIP L</button>
+      <button class="flipper-btn flipper-btn-launch" id="btn-launch">🚀 LANCIA</button>
+      <button class="flipper-btn" id="btn-right">FLIP R ▶</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('flipper-canvas');
+    const ctx = canvas.getContext('2d');
+    const bgMusic = document.getElementById('bg-music');
+
+    const internalWidth = 360;
+    const internalHeight = 480; 
+    canvas.width = internalWidth;
+    canvas.height = internalHeight;
+
+    let score = 0;
+    let multiplier = 1;
+    let ballCount = 3;
+    let isRunning = false;
+    let animationId = null;
+
+    // PALLINA FISICA
+    let balls = [];
+
+    function createBall() {
+      return {
+        x: 342,
+        y: 430,
+        vx: 0,
+        vy: 0,
+        r: 7,
+        inPlunger: true
+      };
+    }
+
+    // BUMPER ZUCCHE
+    let bumpers = [
+      { x: 120, y: 130, r: 18, color: '#ff7518', icon: '🎃' },
+      { x: 240, y: 130, r: 18, color: '#ff7518', icon: '🎃' },
+      { x: 180, y: 190, r: 20, color: '#9d4edd', icon: '💀' }
+    ];
+
+    // PONTI / RAMPE BONUS
+    let ramps = [
+      { x1: 40, y1: 220, x2: 100, y2: 100, name: 'Ponte Mummia', color: '#00ffcc' },
+      { x1: 320, y1: 220, x2: 260, y2: 100, name: 'Ponte Fantasma', color: '#ff0055' }
+    ];
+
+    // FLIPPERS (PALETTE)
+    let leftFlipper = { x: 105, y: 415, length: 55, angle: 0.3, baseAngle: 0.3, targetAngle: 0.3 };
+    let rightFlipper = { x: 235, y: 415, length: 55, angle: Math.PI - 0.3, baseAngle: Math.PI - 0.3, targetAngle: Math.PI - 0.3 };
+
+    function initGame() {
+      score = 0;
+      multiplier = 1;
+      ballCount = 3;
+      balls = [createBall()];
+      document.getElementById('score').innerText = score;
+      document.getElementById('multiplier').innerText = multiplier + 'X';
+      document.getElementById('balls').innerText = '🔮'.repeat(ballCount);
+    }
+
+    function drawTable() {
+      // Sfondi e pareti del flipper
+      ctx.strokeStyle = '#38285c';
+      ctx.lineWidth = 4;
+      
+      // Muro perimetrale esterno
+      ctx.beginPath();
+      ctx.moveTo(330, 470);
+      ctx.lineTo(330, 80);
+      ctx.arc(180, 80, 150, 0, Math.PI, true);
+      ctx.lineTo(30, 470);
+      ctx.stroke();
+
+      // Corsia di lancio (Plunger lane)
+      ctx.beginPath();
+      ctx.moveTo(330, 470);
+      ctx.lineTo(330, 120);
+      ctx.stroke();
+
+      // Inclinazione guida in basso verso i flipper
+      ctx.beginPath();
+      ctx.moveTo(30, 350);
+      ctx.lineTo(105, 415);
+      ctx.moveTo(330, 350);
+      ctx.lineTo(235, 415);
+      ctx.stroke();
+
+      // Disegna i Ponti / Rampe Elevated
+      ramps.forEach(r => {
+        ctx.strokeStyle = r.color;
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(r.x1, r.y1);
+        ctx.quadraticCurveTo((r.x1 + r.x2)/2 - 15, (r.y1 + r.y2)/2, r.x2, r.y2);
+        ctx.stroke();
+      });
+
+      // Disegna Bumper Zucche
+      bumpers.forEach(b => {
+        ctx.fillStyle = b.color;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.font = '16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(b.icon, b.x, b.y + 1);
+      });
+    }
+
+    function drawFlippers() {
+      // Flipper Sinistro
+      ctx.strokeStyle = '#ff7518';
+      ctx.lineWidth = 8;
+      ctx.lineCap = 'round';
+
+      ctx.beginPath();
+      ctx.moveTo(leftFlipper.x, leftFlipper.y);
+      ctx.lineTo(leftFlipper.x + Math.cos(leftFlipper.angle) * leftFlipper.length, leftFlipper.y + Math.sin(leftFlipper.angle) * leftFlipper.length);
+      ctx.stroke();
+
+      // Flipper Destro
+      ctx.beginPath();
+      ctx.moveTo(rightFlipper.x, rightFlipper.y);
+      ctx.lineTo(rightFlipper.x + Math.cos(rightFlipper.angle) * rightFlipper.length, rightFlipper.y + Math.sin(rightFlipper.angle) * rightFlipper.length);
+      ctx.stroke();
+    }
+
+    function drawBalls() {
+      balls.forEach(b => {
+        ctx.fillStyle = '#00ffcc';
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+    }
+
+    function update() {
+      // Animazione Flipper flessibili
+      leftFlipper.angle += (leftFlipper.targetAngle - leftFlipper.angle) * 0.4;
+      rightFlipper.angle += (rightFlipper.targetAngle - rightFlipper.angle) * 0.4;
+
+      balls.forEach((b, idx) => {
+        if (b.inPlunger) return;
+
+        // Gravità della pallina
+        b.vy += 0.25;
+        b.x += b.vx;
+        b.y += b.vy;
+
+        // Attrito dell'aria
+        b.vx *= 0.99;
+        b.vy *= 0.99;
+
+        // Rimbalzo pareti esterne
+        if (b.x - b.r < 30) { b.x = 30 + b.r; b.vx *= -0.8; }
+        if (b.x + b.r > 330 && b.y < 350) { b.x = 330 - b.r; b.vx *= -0.8; }
+        if (b.y - b.r < 30) { b.y = 30 + b.r; b.vy *= -0.8; }
+
+        // Rimbalzo Bumper Zucche
+        bumpers.forEach(bmp => {
+          let dx = b.x - bmp.x;
+          let dy = b.y - bmp.y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < b.r + bmp.r) {
+            let angle = Math.atan2(dy, dx);
+            b.vx = Math.cos(angle) * 9;
+            b.vy = Math.sin(angle) * 9;
+            
+            score += 50 * multiplier;
+            document.getElementById('score').innerText = score;
+          }
+        });
+
+        // Ingresso nelle Rampe / Ponti
+        ramps.forEach(r => {
+          let dx = b.x - r.x1;
+          let dy = b.y - r.y1;
+          if (Math.sqrt(dx*dx + dy*dy) < 20) {
+            b.x = r.x2;
+            b.y = r.y2;
+            b.vy = -6;
+            b.vx = (r.x2 < 180) ? 3 : -3;
+            
+            multiplier = Math.min(5, multiplier + 1);
+            score += 200;
+            document.getElementById('score').innerText = score;
+            document.getElementById('multiplier').innerText = multiplier + 'X';
+          }
+        });
+
+        // Impatto con Flipper Sinistro
+        let dL = Math.sqrt(Math.pow(b.x - leftFlipper.x, 2) + Math.pow(b.y - leftFlipper.y, 2));
+        if (dL < leftFlipper.length && b.y > leftFlipper.y - 10 && b.y < leftFlipper.y + 20) {
+          b.vy = -Math.abs(b.vy) - 6;
+          b.vx += (leftFlipper.targetAngle < leftFlipper.baseAngle) ? 4 : 1;
+        }
+
+        // Impatto con Flipper Destro
+        let dR = Math.sqrt(Math.pow(b.x - rightFlipper.x, 2) + Math.pow(b.y - rightFlipper.y, 2));
+        if (dR < rightFlipper.length && b.y > rightFlipper.y - 10 && b.y < rightFlipper.y + 20) {
+          b.vy = -Math.abs(b.vy) - 6;
+          b.vx -= (rightFlipper.targetAngle > rightFlipper.baseAngle) ? 4 : 1;
+        }
+
+        // Pallina persa in basso
+        if (b.y > 480) {
+          balls.splice(idx, 1);
+          if (balls.length === 0) {
+            ballCount--;
+            document.getElementById('balls').innerText = '🔮'.repeat(Math.max(0, ballCount));
+            if (ballCount > 0) {
+              balls.push(createBall());
+            } else {
+              bgMusic.pause();
+              alert("Game Over! Punteggio finale: " + score);
+              resetGame();
+            }
+          }
+        }
+      });
+    }
+
+    function launchBall() {
+      balls.forEach(b => {
+        if (b.inPlunger) {
+          b.inPlunger = false;
+          b.vy = -14 - Math.random() * 3;
+          b.vx = -1;
+        }
+      });
+    }
+
+    function resetGame() {
+      initGame();
+      isRunning = false;
+      document.getElementById('start-btn').innerText = "PLAY";
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, internalWidth, internalHeight);
+      drawTable();
+      drawFlippers();
+      drawBalls();
+    }
+
+    function loop() {
+      if (isRunning) {
+        update();
+        draw();
+        animationId = requestAnimationFrame(loop);
+      }
+    }
+
+    // CONTROLLI TOUCH
+    const btnLeft = document.getElementById('btn-left');
+    const btnRight = document.getElementById('btn-right');
+    const btnLaunch = document.getElementById('btn-launch');
+
+    btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); leftFlipper.targetAngle = -0.3; });
+    btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); leftFlipper.targetAngle = leftFlipper.baseAngle; });
+    btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); rightFlipper.targetAngle = Math.PI + 0.3; });
+    btnRight.addEventListener('touchend', (e) => { e.preventDefault(); rightFlipper.targetAngle = rightFlipper.baseAngle; });
+    btnLaunch.addEventListener('click', launchBall);
+
+    // CONTROLLI TASTIERA PC
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') leftFlipper.targetAngle = -0.3;
+      if (e.key === 'ArrowRight') rightFlipper.targetAngle = Math.PI + 0.3;
+      if (e.key === ' ') launchBall();
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.key === 'ArrowLeft') leftFlipper.targetAngle = leftFlipper.baseAngle;
+      if (e.key === 'ArrowRight') rightFlipper.targetAngle = rightFlipper.baseAngle;
+    });
+
+    function playAudioSafe() {
+      if (bgMusic.paused) {
+        let p = bgMusic.play();
+        if (p !== undefined) p.catch(err => console.log(err));
+      }
+    }
+
+    function togglePlayState() {
+      if (!isRunning) {
+        isRunning = true;
+        playAudioSafe();
+        document.getElementById('start-btn').innerText = "PAUSE";
+        loop();
+      } else {
+        isRunning = false;
+        bgMusic.pause();
+        cancelAnimationFrame(animationId);
+        document.getElementById('start-btn').innerText = "PLAY";
+      }
+    }
+
+    document.getElementById('start-btn').onclick = togglePlayState;
+
+    initGame();
+    draw();
+  </script>
+</body>
+</html>
