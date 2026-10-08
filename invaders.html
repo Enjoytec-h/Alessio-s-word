@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, viewport-fit=cover">
+  <title>Spooky Invaders 👾 - Alessio's World</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@700&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#141026">
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      background: #08070c;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+    }
+    .game-container {
+      width: 100%;
+      height: 100%;
+      max-width: 420px;
+      padding: 6px 10px env(safe-area-inset-bottom, 6px) 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+    .back-home-container {
+      text-align: left;
+      width: 100%;
+      flex-shrink: 0;
+    }
+    .back-btn {
+      background: #141026;
+      border: 1.5px solid #38285c;
+      color: #ff7518;
+      font-family: 'Creepster', cursive;
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .halloween-title {
+      font-size: 1.2rem;
+      margin: 2px 0;
+      text-align: center;
+      color: #ff7518;
+      font-family: 'Creepster', cursive;
+      flex-shrink: 0;
+    }
+    
+    .top-hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      background: #141026;
+      border: 1.5px solid #38285c;
+      border-radius: 6px;
+      padding: 4px 10px;
+      flex-shrink: 0;
+    }
+    .hud-stat {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+    }
+    .hud-stat label {
+      font-size: 0.55rem;
+      color: #a0a0ff;
+      font-family: 'Roboto', sans-serif;
+    }
+    .hud-stat span {
+      font-size: 0.8rem;
+      color: #fff;
+      font-weight: bold;
+    }
+    .gothic-btn-top {
+      background: #ff7518;
+      color: #141026;
+      border: none;
+      font-family: 'Creepster', cursive;
+      font-size: 0.85rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .canvas-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      min-height: 0;
+      padding: 2px 0;
+      position: relative;
+    }
+    canvas#invaders-canvas {
+      background-color: #0b0914;
+      border: 2px solid #4a2875;
+      border-radius: 6px;
+      box-shadow: inset 0 0 10px #000;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+      touch-action: none;
+    }
+
+    /* Controlli Touch Inferiori */
+    .touch-controls {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      margin-bottom: 4px;
+    }
+    .touch-btn {
+      flex: 1;
+      height: 48px;
+      background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
+      border: 1.5px solid #5a3291;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 3px 0 #0a0714;
+      touch-action: manipulation;
+      color: #ff7518;
+      font-family: 'Creepster', cursive;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .touch-btn-fire {
+      background: linear-gradient(180deg, #ff7518 0%, #9e3d00 100%);
+      color: #141026;
+      border-color: #ffaa66;
+      flex: 1.2;
+      font-size: 1.3rem;
+    }
+    .touch-btn:active, .touch-btn.pressed {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #0a0714;
+      background: #9d4edd;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <audio id="bg-music" loop preload="auto">
+    <source src="spooky_invaders.mp3" type="audio/mpeg">
+    <source src="spooky_breakout.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="game-container">
+    <div class="back-home-container">
+      <a href="index.html" class="back-btn">⬅ TORNA ALLA HOME</a>
+    </div>
+
+    <h1 class="halloween-title">SPOOKY INVADERS 👾</h1>
+
+    <div class="top-hud">
+      <div class="hud-stat">
+        <label>SCORE</label>
+        <span id="score">0</span>
+      </div>
+      <div class="hud-stat">
+        <label>WAVE</label>
+        <span id="wave">1</span>
+      </div>
+      <div class="hud-stat">
+        <label>LIVES</label>
+        <span id="lives" style="font-size: 0.65rem;">🦇🦇🦇</span>
+      </div>
+      <button id="start-btn" class="gothic-btn-top">PLAY</button>
+    </div>
+
+    <div class="canvas-wrapper">
+      <canvas id="invaders-canvas"></canvas>
+    </div>
+
+    <div class="touch-controls">
+      <button class="touch-btn" id="btn-left">◀</button>
+      <button class="touch-btn touch-btn-fire" id="btn-fire">🔥 SPARA</button>
+      <button class="touch-btn" id="btn-right">▶</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('invaders-canvas');
+    const ctx = canvas.getContext('2d');
+    const bgMusic = document.getElementById('bg-music');
+
+    const internalWidth = 360;
+    const internalHeight = 440; 
+    canvas.width = internalWidth;
+    canvas.height = internalHeight;
+
+    let score = 0;
+    let wave = 1;
+    let lives = 3;
+    let isRunning = false;
+    let animationId = null;
+
+    let player = {
+      w: 32,
+      h: 24,
+      x: internalWidth / 2 - 16,
+      y: internalHeight - 35,
+      speed: 5,
+      fireRate: 250, // ms tra un colpo e l'altro
+      lastShot: 0,
+      tripleShot: false,
+      shield: false
+    };
+
+    let leftPressed = false;
+    let rightPressed = false;
+
+    let bullets = [];
+    let monsterBullets = [];
+    let monsters = [];
+    let powerUps = [];
+
+    let monsterDirection = 1; // 1 = destra, -1 = sinistra
+    let monsterStepDown = false;
+    let monsterSpeed = 1;
+
+    function initMonsters() {
+      monsters = [];
+      let rows = 4;
+      let cols = 6;
+      let startX = 20;
+      let startY = 40;
+      let spacingX = 48;
+      let spacingY = 32;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          let health = 1;
+          let icon = '🎃';
+          
+          if (r === 0) { health = 3; icon = '🦇'; }      // Pipistrello Re (3 colpi)
+          else if (r === 1) { health = 2; icon = '👻'; } // Fantasma (2 colpi)
+          else { health = 1; icon = '🎃'; }               // Zucca (1 colpo)
+
+          monsters.push({
+            x: startX + c * spacingX,
+            y: startY + r * spacingY,
+            w: 28,
+            h: 24,
+            health: health,
+            maxHealth: health,
+            icon: icon
+          });
+        }
+      }
+      monsterSpeed = 0.8 + (wave - 1) * 0.3;
+    }
+
+    function drawPlayer() {
+      ctx.save();
+      // Disegna la navicella / torretta di Halloween
+      ctx.fillStyle = player.shield ? '#00ffcc' : '#ff7518';
+      ctx.font = '22px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(player.shield ? '🛡️' : '🚀', player.x + player.w/2, player.y + player.h);
+      ctx.restore();
+    }
+
+    function drawMonsters() {
+      ctx.font = '20px sans-serif';
+      ctx.textAlign = 'center';
+      monsters.forEach(m => {
+        ctx.fillText(m.icon, m.x + m.w/2, m.y + m.h - 4);
+      });
+    }
+
+    function drawBullets() {
+      // Proiettili giocatore
+      ctx.fillStyle = '#00ffcc';
+      bullets.forEach(b => {
+        ctx.fillRect(b.x - 2, b.y, 4, 10);
+      });
+
+      // Proiettili mostri
+      ctx.fillStyle = '#ff4444';
+      monsterBullets.forEach(mb => {
+        ctx.beginPath();
+        ctx.arc(mb.x, mb.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    function drawPowerUps() {
+      powerUps.forEach(p => {
+        ctx.save();
+        ctx.font = '16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(p.symbol, p.x, p.y);
+        ctx.restore();
+      });
+    }
+
+    function shoot() {
+      let now = Date.now();
+      if (now - player.lastShot > player.fireRate) {
+        if (player.tripleShot) {
+          bullets.push({ x: player.x + player.w/2 - 10, y: player.y, speedY: -7 });
+          bullets.push({ x: player.x + player.w/2, y: player.y, speedY: -7 });
+          bullets.push({ x: player.x + player.w/2 + 10, y: player.y, speedY: -7 });
+        } else {
+          bullets.push({ x: player.x + player.w/2, y: player.y, speedY: -7 });
+        }
+        player.lastShot = now;
+      }
+    }
+
+    function update() {
+      // Movimento giocatore
+      if (leftPressed) player.x -= player.speed;
+      if (rightPressed) player.x += player.speed;
+
+      if (player.x < 0) player.x = 0;
+      if (player.x + player.w > internalWidth) player.x = internalWidth - player.w;
+
+      // Movimento proiettili giocatore
+      bullets.forEach((b, index) => {
+        b.y += b.speedY;
+        if (b.y < 0) bullets.splice(index, 1);
+      });
+
+      // Movimento proiettili mostri
+      monsterBullets.forEach((mb, index) => {
+        mb.y += 3;
+        // Collisione con giocatore
+        if (mb.y >= player.y && mb.x >= player.x && mb.x <= player.x + player.w) {
+          monsterBullets.splice(index, 1);
+          if (player.shield) {
+            player.shield = false;
+          } else {
+            lives--;
+            document.getElementById('lives').innerText = '🦇'.repeat(Math.max(0, lives));
+            if (lives <= 0) {
+              alert("Game Over! I mostri hanno invaso!");
+              resetGame();
+            }
+          }
+        } else if (mb.y > internalHeight) {
+          monsterBullets.splice(index, 1);
+        }
+      });
+
+      // Movimento mostri (destra/sinistra e discesa)
+      let reachEdge = false;
+      monsters.forEach(m => {
+        m.x += monsterDirection * monsterSpeed;
+        if (m.x + m.w >= internalWidth - 10 || m.x <= 10) {
+          reachEdge = true;
+        }
+
+        // Sparo casuale del mostro
+        if (Math.random() < 0.001 * wave) {
+          monsterBullets.push({ x: m.x + m.w/2, y: m.y + m.h });
+        }
+      });
+
+      if (reachEdge) {
+        monsterDirection *= -1;
+        monsters.forEach(m => { m.y += 12; });
+      }
+
+      // Collisioni proiettili - mostri
+      bullets.forEach((b, bIdx) => {
+        monsters.forEach((m, mIdx) => {
+          if (b.x > m.x && b.x < m.x + m.w && b.y > m.y && b.y < m.y + m.h) {
+            bullets.splice(bIdx, 1);
+            m.health--;
+            
+            if (m.health <= 0) {
+              score += m.maxHealth * 20;
+              document.getElementById('score').innerText = score;
+
+              // Generazione Power-up / Downgrade
+              if (Math.random() < 0.35) {
+                let items = [
+                  { type: 'triple', symbol: '⚡' },
+                  { type: 'fast', symbol: '🧪' },
+                  { type: 'shield', symbol: '🛡️' },
+                  { type: 'slow', symbol: '🕷️' }, // Downgrade
+                  { type: 'life', symbol: '🦇' }
+                ];
+                let chosen = items[Math.floor(Math.random() * items.length)];
+                powerUps.push({ x: m.x + m.w/2, y: m.y, type: chosen.type, symbol: chosen.symbol });
+              }
+
+              monsters.splice(mIdx, 1);
+            }
+          }
+        });
+      });
+
+      // Movimento Power-Up
+      powerUps.forEach((p, index) => {
+        p.y += 2;
+        if (p.y >= player.y && p.x >= player.x && p.x <= player.x + player.w) {
+          applyPowerUp(p.type);
+          powerUps.splice(index, 1);
+        } else if (p.y > internalHeight) {
+          powerUps.splice(index, 1);
+        }
+      });
+
+      // Vittoria Ondata
+      if (monsters.length === 0) {
+        wave++;
+        document.getElementById('wave').innerText = wave;
+        initMonsters();
+        alert("Ondata " + (wave - 1) + " distrutta! Preparati alla prossima!");
+      }
+
+      // Sconfitta se i mostri arrivano in basso
+      monsters.forEach(m => {
+        if (m.y + m.h >= player.y) {
+          alert("I mostri sono atterrati! Game Over!");
+          resetGame();
+        }
+      });
+    }
+
+    function applyPowerUp(type) {
+      if (type === 'triple') {
+        player.tripleShot = true;
+        setTimeout(() => player.tripleShot = false, 8000);
+      } else if (type === 'fast') {
+        player.fireRate = 120;
+        setTimeout(() => player.fireRate = 250, 8000);
+      } else if (type === 'shield') {
+        player.shield = true;
+      } else if (type === 'slow') { // Downgrade
+        player.speed = 2.5;
+        setTimeout(() => player.speed = 5, 5000);
+      } else if (type === 'life') {
+        lives = Math.min(5, lives + 1);
+        document.getElementById('lives').innerText = '🦇'.repeat(lives);
+      }
+    }
+
+    function resetGame() {
+      score = 0;
+      wave = 1;
+      lives = 3;
+      player.tripleShot = false;
+      player.shield = false;
+      player.speed = 5;
+      player.fireRate = 250;
+      bullets = [];
+      monsterBullets = [];
+      powerUps = [];
+      document.getElementById('score').innerText = score;
+      document.getElementById('wave').innerText = wave;
+      document.getElementById('lives').innerText = '🦇🦇🦇';
+      initMonsters();
+      isRunning = false;
+      document.getElementById('start-btn').innerText = "PLAY";
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, internalWidth, internalHeight);
+      drawPlayer();
+      drawMonsters();
+      drawBullets();
+      drawPowerUps();
+    }
+
+    function loop() {
+      if (isRunning) {
+        update();
+        draw();
+        animationId = requestAnimationFrame(loop);
+      }
+    }
+
+    // Eventi Pulsanti Touch
+    const btnLeft = document.getElementById('btn-left');
+    const btnRight = document.getElementById('btn-right');
+    const btnFire = document.getElementById('btn-fire');
+
+    btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); leftPressed = true; });
+    btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); leftPressed = false; });
+    btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); rightPressed = true; });
+    btnRight.addEventListener('touchend', (e) => { e.preventDefault(); rightPressed = false; });
+    btnFire.addEventListener('touchstart', (e) => { e.preventDefault(); shoot(); });
+
+    btnLeft.addEventListener('mousedown', () => leftPressed = true);
+    btnLeft.addEventListener('mouseup', () => leftPressed = false);
+    btnRight.addEventListener('mousedown', () => rightPressed = true);
+    btnRight.addEventListener('mouseup', () => rightPressed = false);
+    btnFire.addEventListener('click', () => shoot());
+
+    function togglePlayState() {
+      if (!isRunning) {
+        isRunning = true;
+        bgMusic.play().catch(e => console.log(e));
+        document.getElementById('start-btn').innerText = "PAUSE";
+        loop();
+      } else {
+        isRunning = false;
+        bgMusic.pause();
+        cancelAnimationFrame(animationId);
+        document.getElementById('start-btn').innerText = "PLAY";
+      }
+    }
+
+    document.getElementById('start-btn').onclick = togglePlayState;
+
+    initMonsters();
+    draw();
+  </script>
+</body>
+</html>
