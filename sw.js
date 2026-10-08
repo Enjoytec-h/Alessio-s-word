@@ -1,4 +1,4 @@
-const CACHE_NAME = 'halloween-games-v5'; // <-- CAMBIA QUESTO NUMERO AD OGNI MODIFICA (es. v4, v5...)
+const CACHE_NAME = 'halloween-games-v6'; // <-- CAMBIA QUESTO NUMERO AD OGNI MODIFICA (es. v4, v5...)
 const assetsToCache = [
   'index.html',
   'tetris.html',
