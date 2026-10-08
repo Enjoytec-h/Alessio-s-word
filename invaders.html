@@ -155,7 +155,8 @@
       color: #141026;
       border-color: #ffaa66;
       flex: 1.2;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
+      font-weight: bold;
     }
     .touch-btn:active, .touch-btn.pressed {
       transform: translateY(2px);
@@ -167,9 +168,9 @@
 </head>
 <body>
 
+  <!-- TRACCIA AUDIO RICHIESTA -->
   <audio id="bg-music" loop preload="auto">
-    <source src="spooky_invaders.mp3" type="audio/mpeg">
-    <source src="spooky_breakout.mp3" type="audio/mpeg">
+    <source src="spooky_invaders_ita.mp3" type="audio/mpeg">
   </audio>
 
   <div class="game-container">
@@ -200,9 +201,9 @@
     </div>
 
     <div class="touch-controls">
-      <button class="touch-btn" id="btn-left">◀</button>
+      <button class="touch-btn" id="btn-left">◀ SINISTRA</button>
       <button class="touch-btn touch-btn-fire" id="btn-fire">🔥 SPARA</button>
-      <button class="touch-btn" id="btn-right">▶</button>
+      <button class="touch-btn" id="btn-right">DESTRA ▶</button>
     </div>
   </div>
 
@@ -223,12 +224,12 @@
     let animationId = null;
 
     let player = {
-      w: 32,
-      h: 24,
-      x: internalWidth / 2 - 16,
+      w: 40,
+      h: 28,
+      x: internalWidth / 2 - 20,
       y: internalHeight - 35,
-      speed: 5,
-      fireRate: 250, // ms tra un colpo e l'altro
+      speed: 6,
+      fireRate: 250,
       lastShot: 0,
       tripleShot: false,
       shield: false
@@ -242,9 +243,8 @@
     let monsters = [];
     let powerUps = [];
 
-    let monsterDirection = 1; // 1 = destra, -1 = sinistra
-    let monsterStepDown = false;
-    let monsterSpeed = 1;
+    let monsterDirection = 1;
+    let monsterSpeed = 0.8;
 
     function initMonsters() {
       monsters = [];
@@ -275,16 +275,18 @@
           });
         }
       }
-      monsterSpeed = 0.8 + (wave - 1) * 0.3;
+      // Incremento velocità per livello
+      monsterSpeed = 0.6 + (wave * 0.35);
     }
 
     function drawPlayer() {
       ctx.save();
-      // Disegna la navicella / torretta di Halloween
-      ctx.fillStyle = player.shield ? '#00ffcc' : '#ff7518';
-      ctx.font = '22px sans-serif';
+      ctx.font = '24px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(player.shield ? '🛡️' : '🚀', player.x + player.w/2, player.y + player.h);
+      
+      // Disegna lo Scheletro con Mitra
+      let playerSprite = player.shield ? '🛡️💀' : '💀🔫';
+      ctx.fillText(playerSprite, player.x + player.w/2, player.y + player.h - 2);
       ctx.restore();
     }
 
@@ -297,13 +299,13 @@
     }
 
     function drawBullets() {
-      // Proiettili giocatore
-      ctx.fillStyle = '#00ffcc';
+      // Proiettili Scheletro
+      ctx.fillStyle = '#ffaa00';
       bullets.forEach(b => {
         ctx.fillRect(b.x - 2, b.y, 4, 10);
       });
 
-      // Proiettili mostri
+      // Proiettili Mostri
       ctx.fillStyle = '#ff4444';
       monsterBullets.forEach(mb => {
         ctx.beginPath();
@@ -323,37 +325,36 @@
     }
 
     function shoot() {
+      if (!isRunning) return;
       let now = Date.now();
       if (now - player.lastShot > player.fireRate) {
         if (player.tripleShot) {
-          bullets.push({ x: player.x + player.w/2 - 10, y: player.y, speedY: -7 });
-          bullets.push({ x: player.x + player.w/2, y: player.y, speedY: -7 });
-          bullets.push({ x: player.x + player.w/2 + 10, y: player.y, speedY: -7 });
+          bullets.push({ x: player.x + player.w/2 - 12, y: player.y, speedY: -8 });
+          bullets.push({ x: player.x + player.w/2, y: player.y, speedY: -8 });
+          bullets.push({ x: player.x + player.w/2 + 12, y: player.y, speedY: -8 });
         } else {
-          bullets.push({ x: player.x + player.w/2, y: player.y, speedY: -7 });
+          bullets.push({ x: player.x + player.w/2, y: player.y, speedY: -8 });
         }
         player.lastShot = now;
       }
     }
 
     function update() {
-      // Movimento giocatore
       if (leftPressed) player.x -= player.speed;
       if (rightPressed) player.x += player.speed;
 
       if (player.x < 0) player.x = 0;
       if (player.x + player.w > internalWidth) player.x = internalWidth - player.w;
 
-      // Movimento proiettili giocatore
+      // Proiettili giocatore
       bullets.forEach((b, index) => {
         b.y += b.speedY;
         if (b.y < 0) bullets.splice(index, 1);
       });
 
-      // Movimento proiettili mostri
+      // Proiettili mostri
       monsterBullets.forEach((mb, index) => {
-        mb.y += 3;
-        // Collisione con giocatore
+        mb.y += 3.5;
         if (mb.y >= player.y && mb.x >= player.x && mb.x <= player.x + player.w) {
           monsterBullets.splice(index, 1);
           if (player.shield) {
@@ -362,6 +363,7 @@
             lives--;
             document.getElementById('lives').innerText = '🦇'.repeat(Math.max(0, lives));
             if (lives <= 0) {
+              bgMusic.pause();
               alert("Game Over! I mostri hanno invaso!");
               resetGame();
             }
@@ -371,26 +373,29 @@
         }
       });
 
-      // Movimento mostri (destra/sinistra e discesa)
+      // Movimento mostri
       let reachEdge = false;
+      // La velocità aumenta man mano che rimangono meno mostri (come il gioco originale)
+      let currentSpeed = monsterSpeed * (1 + (24 - monsters.length) * 0.05);
+
       monsters.forEach(m => {
-        m.x += monsterDirection * monsterSpeed;
-        if (m.x + m.w >= internalWidth - 10 || m.x <= 10) {
+        m.x += monsterDirection * currentSpeed;
+        if (m.x + m.w >= internalWidth - 8 || m.x <= 8) {
           reachEdge = true;
         }
 
-        // Sparo casuale del mostro
-        if (Math.random() < 0.001 * wave) {
+        // Frequenza sparo nemico
+        if (Math.random() < 0.0015 * wave) {
           monsterBullets.push({ x: m.x + m.w/2, y: m.y + m.h });
         }
       });
 
       if (reachEdge) {
         monsterDirection *= -1;
-        monsters.forEach(m => { m.y += 12; });
+        monsters.forEach(m => { m.y += 14; });
       }
 
-      // Collisioni proiettili - mostri
+      // Impatto proiettili
       bullets.forEach((b, bIdx) => {
         monsters.forEach((m, mIdx) => {
           if (b.x > m.x && b.x < m.x + m.w && b.y > m.y && b.y < m.y + m.h) {
@@ -401,13 +406,12 @@
               score += m.maxHealth * 20;
               document.getElementById('score').innerText = score;
 
-              // Generazione Power-up / Downgrade
-              if (Math.random() < 0.35) {
+              if (Math.random() < 0.30) {
                 let items = [
                   { type: 'triple', symbol: '⚡' },
                   { type: 'fast', symbol: '🧪' },
                   { type: 'shield', symbol: '🛡️' },
-                  { type: 'slow', symbol: '🕷️' }, // Downgrade
+                  { type: 'slow', symbol: '🕷️' },
                   { type: 'life', symbol: '🦇' }
                 ];
                 let chosen = items[Math.floor(Math.random() * items.length)];
@@ -420,7 +424,7 @@
         });
       });
 
-      // Movimento Power-Up
+      // Raccolta Power-Up
       powerUps.forEach((p, index) => {
         p.y += 2;
         if (p.y >= player.y && p.x >= player.x && p.x <= player.x + player.w) {
@@ -436,12 +440,13 @@
         wave++;
         document.getElementById('wave').innerText = wave;
         initMonsters();
-        alert("Ondata " + (wave - 1) + " distrutta! Preparati alla prossima!");
+        alert("Ondata superata! Preparati per la difficoltà " + wave);
       }
 
-      // Sconfitta se i mostri arrivano in basso
+      // Sconfitta discesa mostri
       monsters.forEach(m => {
         if (m.y + m.h >= player.y) {
+          bgMusic.pause();
           alert("I mostri sono atterrati! Game Over!");
           resetGame();
         }
@@ -457,9 +462,9 @@
         setTimeout(() => player.fireRate = 250, 8000);
       } else if (type === 'shield') {
         player.shield = true;
-      } else if (type === 'slow') { // Downgrade
-        player.speed = 2.5;
-        setTimeout(() => player.speed = 5, 5000);
+      } else if (type === 'slow') {
+        player.speed = 3;
+        setTimeout(() => player.speed = 6, 5000);
       } else if (type === 'life') {
         lives = Math.min(5, lives + 1);
         document.getElementById('lives').innerText = '🦇'.repeat(lives);
@@ -472,7 +477,7 @@
       lives = 3;
       player.tripleShot = false;
       player.shield = false;
-      player.speed = 5;
+      player.speed = 6;
       player.fireRate = 250;
       bullets = [];
       monsterBullets = [];
@@ -501,16 +506,17 @@
       }
     }
 
-    // Eventi Pulsanti Touch
+    // Gestione Eventi Touch e Mouse
     const btnLeft = document.getElementById('btn-left');
     const btnRight = document.getElementById('btn-right');
     const btnFire = document.getElementById('btn-fire');
 
-    btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); leftPressed = true; });
-    btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); leftPressed = false; });
-    btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); rightPressed = true; });
-    btnRight.addEventListener('touchend', (e) => { e.preventDefault(); rightPressed = false; });
-    btnFire.addEventListener('touchstart', (e) => { e.preventDefault(); shoot(); });
+    btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); leftPressed = true; btnLeft.classList.add('pressed'); });
+    btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); leftPressed = false; btnLeft.classList.remove('pressed'); });
+    btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); rightPressed = true; btnRight.classList.add('pressed'); });
+    btnRight.addEventListener('touchend', (e) => { e.preventDefault(); rightPressed = false; btnRight.classList.remove('pressed'); });
+    btnFire.addEventListener('touchstart', (e) => { e.preventDefault(); shoot(); btnFire.classList.add('pressed'); });
+    btnFire.addEventListener('touchend', (e) => { e.preventDefault(); btnFire.classList.remove('pressed'); });
 
     btnLeft.addEventListener('mousedown', () => leftPressed = true);
     btnLeft.addEventListener('mouseup', () => leftPressed = false);
@@ -518,10 +524,39 @@
     btnRight.addEventListener('mouseup', () => rightPressed = false);
     btnFire.addEventListener('click', () => shoot());
 
+    // Trascinamento del dito sul Canvas
+    canvas.addEventListener('touchmove', (e) => {
+      let rect = canvas.getBoundingClientRect();
+      let touchX = e.touches[0].clientX - rect.left;
+      let scale = internalWidth / rect.width;
+      player.x = (touchX * scale) - (player.w / 2);
+    });
+
+    // Rilevamento Doppio Tocco (Double Tap) sul Canvas per Play/Pausa
+    let lastTapTime = 0;
+    canvas.addEventListener('touchstart', (e) => {
+      let currentTime = new Date().getTime();
+      let tapLength = currentTime - lastTapTime;
+      if (tapLength < 300 && tapLength > 0) {
+        e.preventDefault();
+        togglePlayState();
+      }
+      lastTapTime = currentTime;
+    });
+
+    function playAudioSafe() {
+      if (bgMusic.paused) {
+        let p = bgMusic.play();
+        if (p !== undefined) {
+          p.catch(err => console.log("Audio in attesa di interazione:", err));
+        }
+      }
+    }
+
     function togglePlayState() {
       if (!isRunning) {
         isRunning = true;
-        bgMusic.play().catch(e => console.log(e));
+        playAudioSafe();
         document.getElementById('start-btn').innerText = "PAUSE";
         loop();
       } else {
