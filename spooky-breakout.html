@@ -133,7 +133,7 @@
       touch-action: none;
     }
 
-    /* Controlli Touch Inferiori (Frecce Movimento Baracca) */
+    /* Controlli Touch Inferiori */
     .touch-controls {
       width: 100%;
       display: flex;
@@ -159,8 +159,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      user-select: none;
     }
-    .touch-btn:active {
+    .touch-btn:active, .touch-btn.pressed {
       transform: translateY(3px);
       box-shadow: 0 1px 0 #0a0714;
       background: #9d4edd;
@@ -226,9 +227,12 @@
       h: 14,
       x: internalWidth / 2 - 40,
       y: internalHeight - 30,
-      dx: 0,
-      speed: 6
+      speed: 7
     };
+
+    // Stati dei comandi (tastiera / pulsanti)
+    let leftPressed = false;
+    let rightPressed = false;
 
     // Palla
     let ball = {
@@ -256,25 +260,22 @@
       for (let c = 0; c < brickColumnCount; c++) {
         bricks[c] = [];
         for (let r = 0; r < brickRowCount; r++) {
-          // Durabilità casuale o fissa: 1 = normale, 2 = duro (richiede 2 colpi)
           let health = (r === 0 || r === 1) ? 2 : 1;
           bricks[c][r] = {
             x: (c * (brickWidth + brickPadding)) + brickOffsetLeft,
             y: (r * (brickHeight + brickPadding)) + brickOffsetTop,
-            status: health, // 2 = solido, 1 = normale, 0 = distrutto
+            status: health,
             maxHealth: health
           };
         }
       }
     }
 
-    // Power-ups che cadono
-    let powerUps = []; // {x, y, type, dy}
-    // Tipi: 'expand' (allunga), 'shrink' (restringe), 'slow' (rallenta palla), 'fast' (accelera palla), 'extra' (vita extra)
+    let powerUps = [];
 
     function resetPositions() {
       paddle.x = internalWidth / 2 - paddle.w / 2;
-      paddle.w = 80; // resetta dimensione
+      paddle.w = 80;
       ball.x = internalWidth / 2;
       ball.y = paddle.y - 12;
       ball.speedX = 3 * (Math.random() > 0.5 ? 1 : -1);
@@ -292,7 +293,6 @@
             ctx.strokeStyle = '#38285c';
             ctx.strokeRect(b.x, b.y, brickWidth, brickHeight);
 
-            // Dettaglio visivo sul mattone
             ctx.fillStyle = '#0b0914';
             ctx.font = '10px Roboto';
             ctx.fillText(b.status === 2 ? '💀' : '🎃', b.x + brickWidth / 2 - 6, b.y + 14);
@@ -339,7 +339,6 @@
               score += (b.maxHealth === 2 ? 20 : 10);
               document.getElementById('score').innerText = score;
 
-              // Genera casualmente un power-up/down (30% di probabilità)
               if (b.status === 0 && Math.random() < 0.35) {
                 let types = [
                   {type: 'expand', symbol: '+', color: '#38b000'},
@@ -383,8 +382,13 @@
     }
 
     function update() {
-      // Movimento barra
-      paddle.x += paddle.dx;
+      // Movimento barra basato sui flag di pressione
+      if (leftPressed) {
+        paddle.x -= paddle.speed;
+      } else if (rightPressed) {
+        paddle.x += paddle.speed;
+      }
+
       if (paddle.x < 0) paddle.x = 0;
       if (paddle.x + paddle.w > internalWidth) paddle.x = internalWidth - paddle.w;
 
@@ -393,22 +397,17 @@
         ball.x += ball.speedX;
         ball.y += ball.speedY;
 
-        // Muri laterali
         if (ball.x + ball.r > internalWidth || ball.x - ball.r < 0) {
           ball.speedX = -ball.speedX;
         }
-        // Soffitto
         if (ball.y - ball.r < 0) {
           ball.speedY = -ball.speedY;
         }
-        // Paddle
         if (ball.y + ball.r > paddle.y && ball.x > paddle.x && ball.x < paddle.x + paddle.w) {
-          // Angolo di rimbalzo basato su dove colpisce la barra
           let hitPoint = ball.x - (paddle.x + paddle.w / 2);
           ball.speedX = hitPoint * 0.15;
           ball.speedY = -Math.abs(ball.speedY);
         }
-        // Fondo (Perdita vita)
         if (ball.y > internalHeight) {
           lives--;
           document.getElementById('lives').innerText = '🦇'.repeat(Math.max(0, lives));
@@ -422,10 +421,8 @@
         ball.x = paddle.x + paddle.w / 2;
       }
 
-      // Aggiorna power-ups
       powerUps.forEach((p, index) => {
         p.y += p.dy;
-        // Collisione con la barra
         if (p.y >= paddle.y && p.x >= paddle.x && p.x <= paddle.x + paddle.w) {
           applyPowerUp(p.type);
           powerUps.splice(index, 1);
@@ -483,20 +480,28 @@
       }
     }
 
-    // Controlli tastiera e touch
-    let leftPressed = false;
-    let rightPressed = false;
+    // Gestione robusta dei pulsanti Touch e Mouse
+    const btnLeft = document.getElementById('btn-left');
+    const btnRight = document.getElementById('btn-right');
 
-    document.getElementById('btn-left').addEventListener('touchstart', () => { paddle.dx = -paddle.speed; });
-    document.getElementById('btn-left').addEventListener('touchend', () => { paddle.dx = 0; });
-    document.getElementById('btn-right').addEventListener('touchstart', () => { paddle.dx = paddle.speed; });
-    document.getElementById('btn-right').addEventListener('touchend', () => { paddle.dx = 0; });
+    // Sinistra
+    btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); leftPressed = true; btnLeft.classList.add('pressed'); });
+    btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); leftPressed = false; btnLeft.classList.remove('pressed'); });
+    btnLeft.addEventListener('mousedown', () => { leftPressed = true; btnLeft.classList.add('pressed'); });
+    btnLeft.addEventListener('mouseup', () => { leftPressed = false; btnLeft.classList.remove('pressed'); });
+    btnLeft.addEventListener('mouseleave', () => { leftPressed = false; btnLeft.classList.remove('pressed'); });
 
-    // Mouse/Touch drag diretto sul canvas per comodità su smartphone
+    // Destra
+    btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); rightPressed = true; btnRight.classList.add('pressed'); });
+    btnRight.addEventListener('touchend', (e) => { e.preventDefault(); rightPressed = false; btnRight.classList.remove('pressed'); });
+    btnRight.addEventListener('mousedown', () => { rightPressed = true; btnRight.classList.add('pressed'); });
+    btnRight.addEventListener('mouseup', () => { rightPressed = false; btnRight.classList.remove('pressed'); });
+    btnRight.addEventListener('mouseleave', () => { rightPressed = false; btnRight.classList.remove('pressed'); });
+
+    // Supporto anche al trascinamento diretto sul canvas
     canvas.addEventListener('touchmove', (e) => {
       let rect = canvas.getBoundingClientRect();
       let touchX = e.touches[0].clientX - rect.left;
-      // Scala rispetto alla larghezza interna del canvas
       let scale = internalWidth / rect.width;
       paddle.x = (touchX * scale) - (paddle.w / 2);
     });
