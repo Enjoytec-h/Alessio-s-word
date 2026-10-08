@@ -29,7 +29,7 @@
       width: 100%;
       height: 100%;
       max-width: 420px;
-      padding: 6px 10px calc(12px + env(safe-area-inset-bottom, 0px)) 10px;
+      padding: 6px 10px calc(10px + env(safe-area-inset-bottom, 0px)) 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -107,7 +107,7 @@
       align-items: center;
       width: 100%;
       min-height: 0;
-      padding: 4px 0;
+      padding: 2px 0;
       position: relative;
     }
     canvas#invaders-canvas {
@@ -124,58 +124,92 @@
       touch-action: none;
     }
 
-    /* CONTROLLI TOUCH */
-    .touch-controls {
+    /* PANNELLO CONTROLLI RETRO ARCADE VINTAGE */
+    .arcade-controls {
       width: 100%;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
+      padding: 0 15px;
       flex-shrink: 0;
-      margin-top: 4px;
-      margin-bottom: 4px;
-      padding: 0 2px;
-    }
-    
-    .joystick-container {
-      display: flex;
-      gap: 6px;
-      flex: 1;
+      margin-top: 2px;
+      height: 80px;
     }
 
-    .touch-btn {
-      flex: 1;
-      height: 46px;
-      background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
-      border: 1.5px solid #5a3291;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 3px 0 #0a0714;
-      touch-action: manipulation;
-      color: #ff7518;
-      font-family: 'Creepster', cursive;
-      font-size: 1.2rem;
+    /* JOYSTICK VINTAGE PALLINA ROSSA */
+    .joystick-base {
+      width: 80px;
+      height: 70px;
+      background: #1c1533;
+      border: 3px solid #38285c;
+      border-radius: 50%;
+      position: relative;
       display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: inset 0 0 10px #000, 0 4px 0 #0a0714;
+      touch-action: none;
+    }
+    .joystick-stick {
+      width: 12px;
+      height: 35px;
+      background: linear-gradient(90deg, #666, #ccc, #444);
+      position: absolute;
+      bottom: 25px;
+      transform-origin: bottom center;
+      border-radius: 3px;
+      pointer-events: none;
+    }
+    .joystick-knob {
+      width: 42px;
+      height: 42px;
+      background: radial-gradient(circle at 30% 30%, #ff5555, #cc0000 60%, #660000);
+      border-radius: 50%;
+      position: absolute;
+      top: -12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.6), inset -2px -2px 6px rgba(0,0,0,0.5);
+      cursor: pointer;
+      pointer-events: none;
+      transition: transform 0.05s linear;
+    }
+
+    /* PULSANTE RETRO SPARA */
+    .arcade-fire-container {
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
     }
-
-    .touch-btn-fire {
-      background: linear-gradient(180deg, #ff7518 0%, #9e3d00 100%);
-      color: #141026;
-      border-color: #ffaa66;
-      flex: 1.2;
-      height: 46px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      border-radius: 8px;
-    }
-
-    .touch-btn:active, .touch-btn.pressed, .touch-btn-fire:active {
-      transform: translateY(2px);
-      box-shadow: 0 1px 0 #0a0714;
-      background: #9d4edd;
+    .arcade-btn-fire {
+      width: 65px;
+      height: 65px;
+      background: radial-gradient(circle at 35% 35%, #ff4d4d, #cc0000 70%, #800000);
+      border: 4px solid #141026;
+      outline: 2px solid #ff7518;
+      border-radius: 50%;
+      box-shadow: 0 6px 0 #660000, 0 8px 12px rgba(0,0,0,0.7);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: #fff;
+      font-family: 'Creepster', cursive;
+      font-size: 1.1rem;
+      text-shadow: 1px 1px 2px #000;
+      touch-action: manipulation;
+    }
+    .arcade-btn-fire:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #660000, 0 4px 6px rgba(0,0,0,0.7);
+      background: radial-gradient(circle at 35% 35%, #ff6666, #e60000 70%, #990000);
+    }
+    .btn-label {
+      font-size: 0.6rem;
+      color: #ff7518;
+      font-family: 'Roboto', sans-serif;
+      margin-top: 2px;
+      font-weight: bold;
+      letter-spacing: 1px;
     }
   </style>
 </head>
@@ -213,13 +247,20 @@
       <canvas id="invaders-canvas"></canvas>
     </div>
 
-    <!-- CONTROLLI TOUCH -->
-    <div class="touch-controls">
-      <div class="joystick-container">
-        <button class="touch-btn" id="btn-left">◀</button>
-        <button class="touch-btn" id="btn-right">▶</button>
+    <!-- PANNELLO CABINATO VINTAGE -->
+    <div class="arcade-controls">
+      <!-- JOYSTICK CON PALLINA ROSSA -->
+      <div class="joystick-base" id="joystick-base">
+        <div class="joystick-stick" id="joystick-stick">
+          <div class="joystick-knob" id="joystick-knob"></div>
+        </div>
       </div>
-      <button class="touch-btn touch-btn-fire" id="btn-fire">🔥 SPARA</button>
+
+      <!-- BOTTONE ARCADE SPARO -->
+      <div class="arcade-fire-container">
+        <button class="arcade-btn-fire" id="btn-fire">🔥</button>
+        <span class="btn-label">SPARA</span>
+      </div>
     </div>
   </div>
 
@@ -265,7 +306,6 @@
 
     function initMonsters() {
       monsters = [];
-      
       let rows = Math.min(5, 2 + Math.floor((wave + 1) / 2));
       let cols = Math.min(7, 4 + Math.floor(wave / 2));
       
@@ -515,40 +555,67 @@
       }
     }
 
-    // GESTIONE CORRETTA DEL LAYOUT MOBILE AUTOMATICO ALL'APERTURA
-    function forceResizeLayout() {
-      window.scrollTo(0, 0);
-      draw();
+    // LOGICA JOYSTICK RETRO (PALLINA ROSSA)
+    const joyBase = document.getElementById('joystick-base');
+    const joyStick = document.getElementById('joystick-stick');
+    let joystickActive = false;
+
+    function handleJoystickMove(clientX) {
+      let rect = joyBase.getBoundingClientRect();
+      let centerX = rect.left + rect.width / 2;
+      let deltaX = clientX - centerX;
+      let maxDistance = 25;
+
+      // Limita il movimento della pallina
+      deltaX = Math.max(-maxDistance, Math.min(maxDistance, deltaX));
+      joyStick.style.transform = `rotate(${deltaX * 0.8}deg)`;
+
+      if (deltaX < -6) {
+        leftPressed = true;
+        rightPressed = false;
+      } else if (deltaX > 6) {
+        rightPressed = true;
+        leftPressed = false;
+      } else {
+        leftPressed = false;
+        rightPressed = false;
+      }
     }
 
-    window.addEventListener('load', () => {
-      setTimeout(forceResizeLayout, 100);
-      setTimeout(forceResizeLayout, 300);
+    function resetJoystick() {
+      joystickActive = false;
+      leftPressed = false;
+      rightPressed = false;
+      joyStick.style.transform = `rotate(0deg)`;
+    }
+
+    joyBase.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      joystickActive = true;
+      handleJoystickMove(e.touches[0].clientX);
     });
 
-    window.addEventListener('resize', forceResizeLayout);
-    window.addEventListener('orientationchange', forceResizeLayout);
+    joyBase.addEventListener('touchmove', (e) => {
+      if (joystickActive) {
+        e.preventDefault();
+        handleJoystickMove(e.touches[0].clientX);
+      }
+    });
 
-    // CONTROLLI TOUCH
-    const btnLeft = document.getElementById('btn-left');
-    const btnRight = document.getElementById('btn-right');
+    joyBase.addEventListener('touchend', (e) => { e.preventDefault(); resetJoystick(); });
+    joyBase.addEventListener('touchcancel', (e) => { e.preventDefault(); resetJoystick(); });
+
+    // SUPPORTO MOUSE PER TESTING DA PC
+    joyBase.addEventListener('mousedown', (e) => { joystickActive = true; handleJoystickMove(e.clientX); });
+    window.addEventListener('mousemove', (e) => { if (joystickActive) handleJoystickMove(e.clientX); });
+    window.addEventListener('mouseup', () => { if (joystickActive) resetJoystick(); });
+
+    // PULSANTE SPARO
     const btnFire = document.getElementById('btn-fire');
-
-    btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); leftPressed = true; btnLeft.classList.add('pressed'); });
-    btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); leftPressed = false; btnLeft.classList.remove('pressed'); });
-    btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); rightPressed = true; btnRight.classList.add('pressed'); });
-    btnRight.addEventListener('touchend', (e) => { e.preventDefault(); rightPressed = false; btnRight.classList.remove('pressed'); });
-    
-    btnFire.addEventListener('touchstart', (e) => { e.preventDefault(); shoot(); btnFire.classList.add('pressed'); });
-    btnFire.addEventListener('touchend', (e) => { e.preventDefault(); btnFire.classList.remove('pressed'); });
-
-    btnLeft.addEventListener('mousedown', () => leftPressed = true);
-    btnLeft.addEventListener('mouseup', () => leftPressed = false);
-    btnRight.addEventListener('mousedown', () => rightPressed = true);
-    btnRight.addEventListener('mouseup', () => rightPressed = false);
+    btnFire.addEventListener('touchstart', (e) => { e.preventDefault(); shoot(); });
     btnFire.addEventListener('click', () => shoot());
 
-    // MOVIMENTO TRASCINAMENTO
+    // TRASCINAMENTO DIRETTO SUL CANVAS
     canvas.addEventListener('touchmove', (e) => {
       let rect = canvas.getBoundingClientRect();
       let touchX = e.touches[0].clientX - rect.left;
@@ -556,7 +623,7 @@
       player.x = (touchX * scale) - (player.w / 2);
     });
 
-    // DOPPIO TOCCO ZONA SUPERIORE
+    // DOPPIO TOCCO PAUSA
     let lastTapTime = 0;
     canvas.addEventListener('touchstart', (e) => {
       let rect = canvas.getBoundingClientRect();
@@ -595,6 +662,17 @@
     }
 
     document.getElementById('start-btn').onclick = togglePlayState;
+
+    // RIFORZA LAYOUT MOBILE
+    function forceResizeLayout() {
+      window.scrollTo(0, 0);
+      draw();
+    }
+    window.addEventListener('load', () => {
+      setTimeout(forceResizeLayout, 100);
+      setTimeout(forceResizeLayout, 300);
+    });
+    window.addEventListener('resize', forceResizeLayout);
 
     initMonsters();
     draw();
