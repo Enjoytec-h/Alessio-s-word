@@ -124,19 +124,27 @@
       touch-action: none;
     }
 
-    /* Controlli Touch Inferiori */
+    /* CONTROLLI TOUCH JOYSTICK + SPARO CONSOLE STYLE */
     .touch-controls {
       width: 100%;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       flex-shrink: 0;
       margin-bottom: 4px;
+      padding: 0 4px;
     }
+    
+    .joystick-container {
+      display: flex;
+      gap: 6px;
+      flex: 1;
+    }
+
     .touch-btn {
       flex: 1;
-      height: 48px;
+      height: 52px;
       background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
       border: 1.5px solid #5a3291;
       border-radius: 8px;
@@ -145,20 +153,24 @@
       touch-action: manipulation;
       color: #ff7518;
       font-family: 'Creepster', cursive;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       display: flex;
       align-items: center;
       justify-content: center;
     }
+
     .touch-btn-fire {
       background: linear-gradient(180deg, #ff7518 0%, #9e3d00 100%);
       color: #141026;
       border-color: #ffaa66;
       flex: 1.2;
-      font-size: 1.2rem;
+      height: 52px;
+      font-size: 1.3rem;
       font-weight: bold;
+      border-radius: 10px;
     }
-    .touch-btn:active, .touch-btn.pressed {
+
+    .touch-btn:active, .touch-btn.pressed, .touch-btn-fire:active {
       transform: translateY(2px);
       box-shadow: 0 1px 0 #0a0714;
       background: #9d4edd;
@@ -200,10 +212,13 @@
       <canvas id="invaders-canvas"></canvas>
     </div>
 
+    <!-- CONTROLLI: JOYSTICK FRECCE A SINISTRA E TASTO SPARA A DESTRA -->
     <div class="touch-controls">
-      <button class="touch-btn" id="btn-left">◀ SINISTRA</button>
+      <div class="joystick-container">
+        <button class="touch-btn" id="btn-left">◀</button>
+        <button class="touch-btn" id="btn-right">▶</button>
+      </div>
       <button class="touch-btn touch-btn-fire" id="btn-fire">🔥 SPARA</button>
-      <button class="touch-btn" id="btn-right">DESTRA ▶</button>
     </div>
   </div>
 
@@ -229,7 +244,7 @@
       x: internalWidth / 2 - 20,
       y: internalHeight - 35,
       speed: 6,
-      fireRate: 250,
+      fireRate: 200,
       lastShot: 0,
       tripleShot: false,
       shield: false
@@ -260,9 +275,9 @@
           let health = 1;
           let icon = '🎃';
           
-          if (r === 0) { health = 3; icon = '🦇'; }      // Pipistrello Re (3 colpi)
-          else if (r === 1) { health = 2; icon = '👻'; } // Fantasma (2 colpi)
-          else { health = 1; icon = '🎃'; }               // Zucca (1 colpo)
+          if (r === 0) { health = 3; icon = '🦇'; }      // Pipistrello Re
+          else if (r === 1) { health = 2; icon = '👻'; } // Fantasma
+          else { health = 1; icon = '🎃'; }               // Zucca
 
           monsters.push({
             x: startX + c * spacingX,
@@ -275,7 +290,6 @@
           });
         }
       }
-      // Incremento velocità per livello
       monsterSpeed = 0.6 + (wave * 0.35);
     }
 
@@ -283,8 +297,6 @@
       ctx.save();
       ctx.font = '24px sans-serif';
       ctx.textAlign = 'center';
-      
-      // Disegna lo Scheletro con Mitra
       let playerSprite = player.shield ? '🛡️💀' : '💀🔫';
       ctx.fillText(playerSprite, player.x + player.w/2, player.y + player.h - 2);
       ctx.restore();
@@ -299,13 +311,11 @@
     }
 
     function drawBullets() {
-      // Proiettili Scheletro
       ctx.fillStyle = '#ffaa00';
       bullets.forEach(b => {
         ctx.fillRect(b.x - 2, b.y, 4, 10);
       });
 
-      // Proiettili Mostri
       ctx.fillStyle = '#ff4444';
       monsterBullets.forEach(mb => {
         ctx.beginPath();
@@ -346,13 +356,11 @@
       if (player.x < 0) player.x = 0;
       if (player.x + player.w > internalWidth) player.x = internalWidth - player.w;
 
-      // Proiettili giocatore
       bullets.forEach((b, index) => {
         b.y += b.speedY;
         if (b.y < 0) bullets.splice(index, 1);
       });
 
-      // Proiettili mostri
       monsterBullets.forEach((mb, index) => {
         mb.y += 3.5;
         if (mb.y >= player.y && mb.x >= player.x && mb.x <= player.x + player.w) {
@@ -373,9 +381,7 @@
         }
       });
 
-      // Movimento mostri
       let reachEdge = false;
-      // La velocità aumenta man mano che rimangono meno mostri (come il gioco originale)
       let currentSpeed = monsterSpeed * (1 + (24 - monsters.length) * 0.05);
 
       monsters.forEach(m => {
@@ -384,7 +390,6 @@
           reachEdge = true;
         }
 
-        // Frequenza sparo nemico
         if (Math.random() < 0.0015 * wave) {
           monsterBullets.push({ x: m.x + m.w/2, y: m.y + m.h });
         }
@@ -395,7 +400,6 @@
         monsters.forEach(m => { m.y += 14; });
       }
 
-      // Impatto proiettili
       bullets.forEach((b, bIdx) => {
         monsters.forEach((m, mIdx) => {
           if (b.x > m.x && b.x < m.x + m.w && b.y > m.y && b.y < m.y + m.h) {
@@ -424,7 +428,6 @@
         });
       });
 
-      // Raccolta Power-Up
       powerUps.forEach((p, index) => {
         p.y += 2;
         if (p.y >= player.y && p.x >= player.x && p.x <= player.x + player.w) {
@@ -435,7 +438,6 @@
         }
       });
 
-      // Vittoria Ondata
       if (monsters.length === 0) {
         wave++;
         document.getElementById('wave').innerText = wave;
@@ -443,7 +445,6 @@
         alert("Ondata superata! Preparati per la difficoltà " + wave);
       }
 
-      // Sconfitta discesa mostri
       monsters.forEach(m => {
         if (m.y + m.h >= player.y) {
           bgMusic.pause();
@@ -458,8 +459,8 @@
         player.tripleShot = true;
         setTimeout(() => player.tripleShot = false, 8000);
       } else if (type === 'fast') {
-        player.fireRate = 120;
-        setTimeout(() => player.fireRate = 250, 8000);
+        player.fireRate = 100;
+        setTimeout(() => player.fireRate = 200, 8000);
       } else if (type === 'shield') {
         player.shield = true;
       } else if (type === 'slow') {
@@ -478,7 +479,7 @@
       player.tripleShot = false;
       player.shield = false;
       player.speed = 6;
-      player.fireRate = 250;
+      player.fireRate = 200;
       bullets = [];
       monsterBullets = [];
       powerUps = [];
@@ -506,7 +507,7 @@
       }
     }
 
-    // Gestione Eventi Touch e Mouse
+    // CONTROLLI BOTTONI TOUCH (JOYSTICK SOTTO)
     const btnLeft = document.getElementById('btn-left');
     const btnRight = document.getElementById('btn-right');
     const btnFire = document.getElementById('btn-fire');
@@ -515,6 +516,7 @@
     btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); leftPressed = false; btnLeft.classList.remove('pressed'); });
     btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); rightPressed = true; btnRight.classList.add('pressed'); });
     btnRight.addEventListener('touchend', (e) => { e.preventDefault(); rightPressed = false; btnRight.classList.remove('pressed'); });
+    
     btnFire.addEventListener('touchstart', (e) => { e.preventDefault(); shoot(); btnFire.classList.add('pressed'); });
     btnFire.addEventListener('touchend', (e) => { e.preventDefault(); btnFire.classList.remove('pressed'); });
 
@@ -524,7 +526,7 @@
     btnRight.addEventListener('mouseup', () => rightPressed = false);
     btnFire.addEventListener('click', () => shoot());
 
-    // Trascinamento del dito sul Canvas
+    // MOVIMENTO TRAMITE TRASCINAMENTO SULLO SCHERMO (DITO)
     canvas.addEventListener('touchmove', (e) => {
       let rect = canvas.getBoundingClientRect();
       let touchX = e.touches[0].clientX - rect.left;
@@ -532,12 +534,16 @@
       player.x = (touchX * scale) - (player.w / 2);
     });
 
-    // Rilevamento Doppio Tocco (Double Tap) sul Canvas per Play/Pausa
+    // DOPPIO TOCCO SICURO (SOLO SULLA PARTE SUPERIORE DEL CANVAS)
     let lastTapTime = 0;
     canvas.addEventListener('touchstart', (e) => {
+      let rect = canvas.getBoundingClientRect();
+      let touchY = e.touches[0].clientY - rect.top;
       let currentTime = new Date().getTime();
       let tapLength = currentTime - lastTapTime;
-      if (tapLength < 300 && tapLength > 0) {
+      
+      // Il doppio tocco attiva Pausa/Play solo toccando la metà superiore dello schermo (evita conflitti col movimento)
+      if (tapLength < 300 && tapLength > 0 && touchY < rect.height * 0.3) {
         e.preventDefault();
         togglePlayState();
       }
