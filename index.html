@@ -17,12 +17,9 @@
   <script>
     let deferredPrompt;
 
-    // Questa è la chiave: l'evento si attiva SOLO quando Android ritiene il sito pronto per l'installazione
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      
-      // Ora che Android è PRONTO, mostra il banner di installazione personalizzato!
       mostraPromptInstallazione();
     });
 
@@ -66,7 +63,6 @@
       document.getElementById('install-yes').onclick = async () => {
         banner.remove();
         if (deferredPrompt) {
-          // Lancia la schermata nativa di Android all'istante senza errori
           deferredPrompt.prompt();
           const { outcome } = await deferredPrompt.userChoice;
           console.log(`Risposta utente all'installazione: ${outcome}`);
@@ -79,7 +75,6 @@
       };
     }
 
-    // Registrazione Service Worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js')
@@ -90,7 +85,6 @@
   </script>
 
   <style>
-    /* Stili specifici per la Home di Benvenuto */
     body {
       display: flex;
       flex-direction: column;
@@ -203,6 +197,15 @@
           <p>Raccogli candeline, fuggi dai mostri e mangia le zucche!</p>
         </div>
         <a href="pacman.html" class="play-link-btn">GIOCA</a>
+      </div>
+
+      <!-- Card Spooky Breakout (Arkanoid) -->
+      <div class="game-card">
+        <div class="game-info">
+          <h2>Spooky Breakout</h2>
+          <p>Rompi teschi e zucche, cattura pozioni e domina la barra!</p>
+        </div>
+        <a href="spooky-breakout.html" class="play-link-btn">GIOCA</a>
       </div>
     </div>
   </div>
