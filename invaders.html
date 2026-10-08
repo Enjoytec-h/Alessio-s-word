@@ -124,7 +124,7 @@
       touch-action: none;
     }
 
-    /* BARRA CONTROLLI SOLLEVATA E PIÙ VISIBILE */
+    /* CONTROLLI TOUCH SOLLEVATI */
     .touch-controls {
       width: 100%;
       display: flex;
@@ -213,7 +213,7 @@
       <canvas id="invaders-canvas"></canvas>
     </div>
 
-    <!-- CONTROLLI TOUCH RI-POSIZIONATI -->
+    <!-- CONTROLLI TOUCH -->
     <div class="touch-controls">
       <div class="joystick-container">
         <button class="touch-btn" id="btn-left">◀</button>
@@ -245,7 +245,7 @@
       x: internalWidth / 2 - 20,
       y: internalHeight - 35,
       speed: 6,
-      fireRate: 200,
+      fireRate: 220,
       lastShot: 0,
       tripleShot: false,
       shield: false
@@ -260,38 +260,45 @@
     let powerUps = [];
 
     let monsterDirection = 1;
-    let monsterSpeed = 0.8;
+    let monsterBaseSpeed = 0.4;
+    let totalMonstersInWave = 0;
 
     function initMonsters() {
       monsters = [];
-      let rows = 4;
-      let cols = 6;
-      let startX = 20;
-      let startY = 40;
-      let spacingX = 48;
-      let spacingY = 32;
+      
+      // La griglia cresce gradualmente ad ogni livello (fino a max 5 righe x 7 colonne)
+      let rows = Math.min(5, 2 + Math.floor((wave + 1) / 2));
+      let cols = Math.min(7, 4 + Math.floor(wave / 2));
+      
+      let spacingX = Math.floor(300 / cols);
+      let spacingY = 28;
+      let startX = (internalWidth - (cols * spacingX)) / 2;
+      let startY = 35;
 
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           let health = 1;
           let icon = '🎃';
           
-          if (r === 0) { health = 3; icon = '🦇'; }
-          else if (r === 1) { health = 2; icon = '👻'; }
+          if (r === 0 && wave >= 3) { health = 3; icon = '🦇'; }
+          else if (r <= 1 && wave >= 2) { health = 2; icon = '👻'; }
           else { health = 1; icon = '🎃'; }
 
           monsters.push({
             x: startX + c * spacingX,
             y: startY + r * spacingY,
-            w: 28,
-            h: 24,
+            w: 26,
+            h: 22,
             health: health,
             maxHealth: health,
             icon: icon
           });
         }
       }
-      monsterSpeed = 0.6 + (wave * 0.35);
+      
+      totalMonstersInWave = monsters.length;
+      // Velocità di base aumenta pochissimo a ogni livello (+0.08 per livello)
+      monsterBaseSpeed = 0.35 + (wave * 0.08);
     }
 
     function drawPlayer() {
@@ -304,10 +311,10 @@
     }
 
     function drawMonsters() {
-      ctx.font = '20px sans-serif';
+      ctx.font = '18px sans-serif';
       ctx.textAlign = 'center';
       monsters.forEach(m => {
-        ctx.fillText(m.icon, m.x + m.w/2, m.y + m.h - 4);
+        ctx.fillText(m.icon, m.x + m.w/2, m.y + m.h - 2);
       });
     }
 
@@ -320,7 +327,7 @@
       ctx.fillStyle = '#ff4444';
       monsterBullets.forEach(mb => {
         ctx.beginPath();
-        ctx.arc(mb.x, mb.y, 4, 0, Math.PI * 2);
+        ctx.arc(mb.x, mb.y, 3.5, 0, Math.PI * 2);
         ctx.fill();
       });
     }
@@ -362,8 +369,10 @@
         if (b.y < 0) bullets.splice(index, 1);
       });
 
+      // Velocità proiettili mostri regolata in modo bilanciato
+      let bulletSpeed = 2.2 + (wave * 0.15);
       monsterBullets.forEach((mb, index) => {
-        mb.y += 3.5;
+        mb.y += bulletSpeed;
         if (mb.y >= player.y && mb.x >= player.x && mb.x <= player.x + player.w) {
           monsterBullets.splice(index, 1);
           if (player.shield) {
@@ -383,22 +392,25 @@
       });
 
       let reachEdge = false;
-      let currentSpeed = monsterSpeed * (1 + (24 - monsters.length) * 0.05);
+      // Incremento velocità leggero quando diminuiscono i mostri nell'ondata
+      let currentSpeed = monsterBaseSpeed * (1 + (totalMonstersInWave - monsters.length) * 0.02);
 
       monsters.forEach(m => {
         m.x += monsterDirection * currentSpeed;
-        if (m.x + m.w >= internalWidth - 8 || m.x <= 8) {
+        if (m.x + m.w >= internalWidth - 6 || m.x <= 6) {
           reachEdge = true;
         }
 
-        if (Math.random() < 0.0015 * wave) {
+        // Frequenza di sparo nemica dolce (molto bassa nei livelli 1-2)
+        let fireChance = 0.0003 + (wave * 0.0002);
+        if (Math.random() < fireChance) {
           monsterBullets.push({ x: m.x + m.w/2, y: m.y + m.h });
         }
       });
 
       if (reachEdge) {
         monsterDirection *= -1;
-        monsters.forEach(m => { m.y += 14; });
+        monsters.forEach(m => { m.y += 10; });
       }
 
       bullets.forEach((b, bIdx) => {
@@ -411,7 +423,7 @@
               score += m.maxHealth * 20;
               document.getElementById('score').innerText = score;
 
-              if (Math.random() < 0.30) {
+              if (Math.random() < 0.28) {
                 let items = [
                   { type: 'triple', symbol: '⚡' },
                   { type: 'fast', symbol: '🧪' },
@@ -430,7 +442,7 @@
       });
 
       powerUps.forEach((p, index) => {
-        p.y += 2;
+        p.y += 1.8;
         if (p.y >= player.y && p.x >= player.x && p.x <= player.x + player.w) {
           applyPowerUp(p.type);
           powerUps.splice(index, 1);
@@ -439,11 +451,12 @@
         }
       });
 
+      // Passaggio al livello successivo (Livelli Infiniti)
       if (monsters.length === 0) {
         wave++;
         document.getElementById('wave').innerText = wave;
         initMonsters();
-        alert("Ondata superata! Preparati per la difficoltà " + wave);
+        alert("Ondata superata! Preparati al Livello " + wave);
       }
 
       monsters.forEach(m => {
@@ -460,8 +473,8 @@
         player.tripleShot = true;
         setTimeout(() => player.tripleShot = false, 8000);
       } else if (type === 'fast') {
-        player.fireRate = 100;
-        setTimeout(() => player.fireRate = 200, 8000);
+        player.fireRate = 110;
+        setTimeout(() => player.fireRate = 220, 8000);
       } else if (type === 'shield') {
         player.shield = true;
       } else if (type === 'slow') {
@@ -480,7 +493,7 @@
       player.tripleShot = false;
       player.shield = false;
       player.speed = 6;
-      player.fireRate = 200;
+      player.fireRate = 220;
       bullets = [];
       monsterBullets = [];
       powerUps = [];
@@ -508,7 +521,7 @@
       }
     }
 
-    // EVENTI TOUCH PUSANTI
+    // CONTROLLI TOUCH
     const btnLeft = document.getElementById('btn-left');
     const btnRight = document.getElementById('btn-right');
     const btnFire = document.getElementById('btn-fire');
@@ -527,7 +540,7 @@
     btnRight.addEventListener('mouseup', () => rightPressed = false);
     btnFire.addEventListener('click', () => shoot());
 
-    // MOVIMENTO DITO SU CANVAS
+    // MOVIMENTO TRASCINAMENTO
     canvas.addEventListener('touchmove', (e) => {
       let rect = canvas.getBoundingClientRect();
       let touchX = e.touches[0].clientX - rect.left;
@@ -535,7 +548,7 @@
       player.x = (touchX * scale) - (player.w / 2);
     });
 
-    // DOPPIO TOCCO ZONA SUPERIORE PER PAUSA/PLAY
+    // DOPPIO TOCCO ZONA SUPERIORE
     let lastTapTime = 0;
     canvas.addEventListener('touchstart', (e) => {
       let rect = canvas.getBoundingClientRect();
