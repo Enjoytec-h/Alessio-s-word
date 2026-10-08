@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+  <title>Spooky Breakout 🦇 - Alessio's World</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@700&display=swap" rel="stylesheet">
+  <!-- CONFIGURAZIONE PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#141026">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Halloween Games">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then((reg) => console.log('Service Worker registrato:', reg.scope))
+          .catch((err) => console.log('Registrazione fallita:', err));
+      });
+    }
+  </script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #08070c;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .game-container {
+      width: 100%;
+      height: 100%;
+      max-width: 500px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .back-home-container {
+      text-align: left;
+      width: 100%;
+    }
+    .back-btn {
+      background: #141026;
+      border: 2px solid #38285c;
+      color: #ff7518;
+      font-family: 'Creepster', cursive;
+      font-size: 0.9rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .halloween-title {
+      font-size: 1.4rem;
+      margin: 4px 0;
+      text-align: center;
+      color: #ff7518;
+      font-family: 'Creepster', cursive;
+    }
+    
+    /* Pannello statistiche e play in alto */
+    .top-hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      background: #141026;
+      border: 2px solid #38285c;
+      border-radius: 8px;
+      padding: 6px 12px;
+      margin-bottom: 6px;
+    }
+    .hud-stat {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+    }
+    .hud-stat label {
+      font-size: 0.65rem;
+      color: #a0a0ff;
+      font-family: 'Roboto', sans-serif;
+    }
+    .hud-stat span {
+      font-size: 0.9rem;
+      color: #fff;
+      font-weight: bold;
+    }
+    .gothic-btn-top {
+      background: #ff7518;
+      color: #141026;
+      border: none;
+      font-family: 'Creepster', cursive;
+      font-size: 0.95rem;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* Canvas dinamico */
+    .canvas-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      min-height: 0;
+      padding: 4px 0;
+    }
+    canvas#breakout-canvas {
+      background-color: #0b0914;
+      border: 2px solid #4a2875;
+      border-radius: 8px;
+      box-shadow: inset 0 0 12px #000;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+      touch-action: none;
+    }
+
+    /* Controlli Touch Inferiori (Frecce Movimento Baracca) */
+    .touch-controls {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
+      margin-bottom: 6px;
+    }
+    .touch-btn {
+      flex: 1;
+      height: 52px;
+      background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
+      border: 2px solid #5a3291;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #0a0714;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      color: #ff7518;
+      font-family: 'Creepster', cursive;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .touch-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #0a0714;
+      background: #9d4edd;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <div class="back-home-container">
+      <a href="index.html" class="back-btn">⬅ TORNA ALLA HOME</a>
+    </div>
+
+    <h1 class="halloween-title">SPOOKY BREAKOUT 🦇</h1>
+
+    <!-- HUD Superiore -->
+    <div class="top-hud">
+      <div class="hud-stat">
+        <label>SCORE</label>
+        <span id="score">0</span>
+      </div>
+      <div class="hud-stat">
+        <label>LEVEL</label>
+        <span id="level">1</span>
+      </div>
+      <div class="hud-stat">
+        <label>LIVES</label>
+        <span id="lives" style="font-size: 0.7rem;">🦇🦇🦇</span>
+      </div>
+      <button id="start-btn" class="gothic-btn-top">PLAY</button>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas-wrapper">
+      <canvas id="breakout-canvas"></canvas>
+    </div>
+
+    <!-- Controlli Touch laterali per muovere la barra -->
+    <div class="touch-controls">
+      <button class="touch-btn" id="btn-left">◀ SINISTRA</button>
+      <button class="touch-btn" id="btn-right">DESTRA ▶</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('breakout-canvas');
+    const ctx = canvas.getContext('2d');
+
+    const internalWidth = 360;
+    const internalHeight = 480;
+    canvas.width = internalWidth;
+    canvas.height = internalHeight;
+
+    let score = 0;
+    let level = 1;
+    let lives = 3;
+    let isRunning = false;
+    let animationId = null;
+
+    // Barriera (Paddle)
+    let paddle = {
+      w: 80,
+      h: 14,
+      x: internalWidth / 2 - 40,
+      y: internalHeight - 30,
+      dx: 0,
+      speed: 6
+    };
+
+    // Palla
+    let ball = {
+      x: internalWidth / 2,
+      y: internalHeight - 50,
+      r: 6,
+      speedX: 3,
+      speedY: -3,
+      active: false
+    };
+
+    // Mattoni (Righe, Colonne)
+    let brickRowCount = 5;
+    let brickColumnCount = 6;
+    let brickWidth = 52;
+    let brickHeight = 20;
+    let brickPadding = 6;
+    let brickOffsetTop = 30;
+    let brickOffsetLeft = 15;
+
+    let bricks = [];
+
+    function initBricks() {
+      bricks = [];
+      for (let c = 0; c < brickColumnCount; c++) {
+        bricks[c] = [];
+        for (let r = 0; r < brickRowCount; r++) {
+          // Durabilità casuale o fissa: 1 = normale, 2 = duro (richiede 2 colpi)
+          let health = (r === 0 || r === 1) ? 2 : 1;
+          bricks[c][r] = {
+            x: (c * (brickWidth + brickPadding)) + brickOffsetLeft,
+            y: (r * (brickHeight + brickPadding)) + brickOffsetTop,
+            status: health, // 2 = solido, 1 = normale, 0 = distrutto
+            maxHealth: health
+          };
+        }
+      }
+    }
+
+    // Power-ups che cadono
+    let powerUps = []; // {x, y, type, dy}
+    // Tipi: 'expand' (allunga), 'shrink' (restringe), 'slow' (rallenta palla), 'fast' (accelera palla), 'extra' (vita extra)
+
+    function resetPositions() {
+      paddle.x = internalWidth / 2 - paddle.w / 2;
+      paddle.w = 80; // resetta dimensione
+      ball.x = internalWidth / 2;
+      ball.y = paddle.y - 12;
+      ball.speedX = 3 * (Math.random() > 0.5 ? 1 : -1);
+      ball.speedY = -3;
+      ball.active = false;
+    }
+
+    function drawBricks() {
+      for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+          let b = bricks[c][r];
+          if (b.status > 0) {
+            ctx.fillStyle = b.status === 2 ? '#9d4edd' : '#ff7518';
+            ctx.fillRect(b.x, b.y, brickWidth, brickHeight);
+            ctx.strokeStyle = '#38285c';
+            ctx.strokeRect(b.x, b.y, brickWidth, brickHeight);
+
+            // Dettaglio visivo sul mattone
+            ctx.fillStyle = '#0b0914';
+            ctx.font = '10px Roboto';
+            ctx.fillText(b.status === 2 ? '💀' : '🎃', b.x + brickWidth / 2 - 6, b.y + 14);
+          }
+        }
+      }
+    }
+
+    function drawPaddle() {
+      ctx.fillStyle = '#00ffcc';
+      ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
+      ctx.strokeStyle = '#fff';
+      ctx.strokeRect(paddle.x, paddle.y, paddle.w, paddle.h);
+    }
+
+    function drawBall() {
+      ctx.fillStyle = '#ff4444';
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    function drawPowerUps() {
+      powerUps.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = '9px Roboto';
+        ctx.fillText(p.symbol, p.x - 4, p.y + 3);
+      });
+    }
+
+    function collisionDetection() {
+      for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+          let b = bricks[c][r];
+          if (b.status > 0) {
+            if (ball.x > b.x && ball.x < b.x + brickWidth && ball.y > b.y && ball.y < b.y + brickHeight) {
+              ball.speedY = -ball.speedY;
+              b.status--;
+              score += (b.maxHealth === 2 ? 20 : 10);
+              document.getElementById('score').innerText = score;
+
+              // Genera casualmente un power-up/down (30% di probabilità)
+              if (b.status === 0 && Math.random() < 0.35) {
+                let types = [
+                  {type: 'expand', symbol: '+', color: '#38b000'},
+                  {type: 'shrink', symbol: '-', color: '#ff0055'},
+                  {type: 'slow', symbol: '⏱', color: '#00b4d8'},
+                  {type: 'fast', symbol: '⚡', color: '#faa307'},
+                  {type: 'life', symbol: '🦇', color: '#7209b7'}
+                ];
+                let chosen = types[Math.floor(Math.random() * types.length)];
+                powerUps.push({
+                  x: b.x + brickWidth / 2,
+                  y: b.y + brickHeight,
+                  dy: 2,
+                  type: chosen.type,
+                  symbol: chosen.symbol,
+                  color: chosen.color
+                });
+              }
+
+              checkWinCondition();
+            }
+          }
+        }
+      }
+    }
+
+    function checkWinCondition() {
+      let won = true;
+      for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+          if (bricks[c][r].status > 0) won = false;
+        }
+      }
+      if (won) {
+        level++;
+        document.getElementById('level').innerText = level;
+        initBricks();
+        resetPositions();
+        alert("Livello completato! Avanti al livello " + level);
+      }
+    }
+
+    function update() {
+      // Movimento barra
+      paddle.x += paddle.dx;
+      if (paddle.x < 0) paddle.x = 0;
+      if (paddle.x + paddle.w > internalWidth) paddle.x = internalWidth - paddle.w;
+
+      // Movimento palla
+      if (ball.active) {
+        ball.x += ball.speedX;
+        ball.y += ball.speedY;
+
+        // Muri laterali
+        if (ball.x + ball.r > internalWidth || ball.x - ball.r < 0) {
+          ball.speedX = -ball.speedX;
+        }
+        // Soffitto
+        if (ball.y - ball.r < 0) {
+          ball.speedY = -ball.speedY;
+        }
+        // Paddle
+        if (ball.y + ball.r > paddle.y && ball.x > paddle.x && ball.x < paddle.x + paddle.w) {
+          // Angolo di rimbalzo basato su dove colpisce la barra
+          let hitPoint = ball.x - (paddle.x + paddle.w / 2);
+          ball.speedX = hitPoint * 0.15;
+          ball.speedY = -Math.abs(ball.speedY);
+        }
+        // Fondo (Perdita vita)
+        if (ball.y > internalHeight) {
+          lives--;
+          document.getElementById('lives').innerText = '🦇'.repeat(Math.max(0, lives));
+          resetPositions();
+          if (lives <= 0) {
+            alert("Game Over! La pozione si è esaurita!");
+            resetGame();
+          }
+        }
+      } else {
+        ball.x = paddle.x + paddle.w / 2;
+      }
+
+      // Aggiorna power-ups
+      powerUps.forEach((p, index) => {
+        p.y += p.dy;
+        // Collisione con la barra
+        if (p.y >= paddle.y && p.x >= paddle.x && p.x <= paddle.x + paddle.w) {
+          applyPowerUp(p.type);
+          powerUps.splice(index, 1);
+        } else if (p.y > internalHeight) {
+          powerUps.splice(index, 1);
+        }
+      });
+
+      collisionDetection();
+    }
+
+    function applyPowerUp(type) {
+      if (type === 'expand') {
+        paddle.w = Math.min(130, paddle.w + 25);
+      } else if (type === 'shrink') {
+        paddle.w = Math.max(45, paddle.w - 25);
+      } else if (type === 'slow') {
+        ball.speedX *= 0.8;
+        ball.speedY *= 0.8;
+      } else if (type === 'fast') {
+        ball.speedX *= 1.25;
+        ball.speedY *= 1.25;
+      } else if (type === 'life') {
+        lives = Math.min(5, lives + 1);
+        document.getElementById('lives').innerText = '🦇'.repeat(lives);
+      }
+    }
+
+    function resetGame() {
+      score = 0;
+      level = 1;
+      lives = 3;
+      document.getElementById('score').innerText = score;
+      document.getElementById('level').innerText = level;
+      document.getElementById('lives').innerText = '🦇🦇🦇';
+      initBricks();
+      resetPositions();
+      isRunning = false;
+      document.getElementById('start-btn').innerText = "PLAY";
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, internalWidth, internalHeight);
+      drawBricks();
+      drawPaddle();
+      drawBall();
+      drawPowerUps();
+    }
+
+    function loop() {
+      if (isRunning) {
+        update();
+        draw();
+        animationId = requestAnimationFrame(loop);
+      }
+    }
+
+    // Controlli tastiera e touch
+    let leftPressed = false;
+    let rightPressed = false;
+
+    document.getElementById('btn-left').addEventListener('touchstart', () => { paddle.dx = -paddle.speed; });
+    document.getElementById('btn-left').addEventListener('touchend', () => { paddle.dx = 0; });
+    document.getElementById('btn-right').addEventListener('touchstart', () => { paddle.dx = paddle.speed; });
+    document.getElementById('btn-right').addEventListener('touchend', () => { paddle.dx = 0; });
+
+    // Mouse/Touch drag diretto sul canvas per comodità su smartphone
+    canvas.addEventListener('touchmove', (e) => {
+      let rect = canvas.getBoundingClientRect();
+      let touchX = e.touches[0].clientX - rect.left;
+      // Scala rispetto alla larghezza interna del canvas
+      let scale = internalWidth / rect.width;
+      paddle.x = (touchX * scale) - (paddle.w / 2);
+    });
+
+    document.getElementById('start-btn').onclick = () => {
+      if (!isRunning) {
+        isRunning = true;
+        ball.active = true;
+        document.getElementById('start-btn').innerText = "PAUSE";
+        loop();
+      } else {
+        isRunning = false;
+        cancelAnimationFrame(animationId);
+        document.getElementById('start-btn').innerText = "PLAY";
+      }
+    };
+
+    initBricks();
+    resetPositions();
+    draw();
+  </script>
+</body>
+</html>
