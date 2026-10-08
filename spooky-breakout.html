@@ -45,6 +45,7 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
+      position: relative;
     }
     .back-home-container {
       text-align: left;
@@ -120,6 +121,7 @@
       width: 100%;
       min-height: 0;
       padding: 2px 0;
+      position: relative;
     }
     canvas#breakout-canvas {
       background-color: #0b0914;
@@ -133,6 +135,47 @@
       object-fit: contain;
       display: block;
       touch-action: none;
+    }
+
+    /* Popup Istruzioni / Doppio Tocco */
+    #instructions-popup {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(20, 16, 38, 0.95);
+      border: 2px solid #9d4edd;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      color: #fff;
+      font-family: 'Roboto', sans-serif;
+      z-index: 10;
+      box-shadow: 0 0 20px rgba(157, 78, 221, 0.5);
+      max-width: 300px;
+      width: 90%;
+    }
+    #instructions-popup h2 {
+      font-family: 'Creepster', cursive;
+      color: #ff7518;
+      font-size: 1.4rem;
+      margin-top: 0;
+    }
+    #instructions-popup p {
+      font-size: 0.85rem;
+      color: #d8b4fe;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+    #close-popup-btn {
+      background: #ff7518;
+      color: #141026;
+      border: none;
+      font-family: 'Creepster', cursive;
+      font-size: 1rem;
+      padding: 6px 16px;
+      border-radius: 6px;
+      cursor: pointer;
     }
 
     /* Controlli Touch Inferiori compatti */
@@ -173,6 +216,13 @@
 </head>
 <body>
   <div class="game-container">
+    <!-- Popup Istruzioni -->
+    <div id="instructions-popup">
+      <h2>Istruzioni 🦇</h2>
+      <p>Muovi la barra con i tasti o trascinando sul campo.<br><br>Esegui un <b>doppio tocco rapido</b> sullo schermo per lanciare la palla o metterla in pausa!</p>
+      <button id="close-popup-btn">HO CAPITO</button>
+    </div>
+
     <div class="back-home-container">
       <a href="index.html" class="back-btn">⬅ TORNA ALLA HOME</a>
     </div>
@@ -502,6 +552,20 @@
     btnRight.addEventListener('mouseup', () => { rightPressed = false; btnRight.classList.remove('pressed'); });
     btnRight.addEventListener('mouseleave', () => { rightPressed = false; btnRight.classList.remove('pressed'); });
 
+    // Gestione Movimento touch e Rilevamento Doppio Tocco (Double Tap)
+    let lastTapTime = 0;
+    canvas.addEventListener('touchstart', (e) => {
+      let currentTime = new Date().getTime();
+      let tapLength = currentTime - lastTapTime;
+      
+      if (tapLength < 300 && tapLength > 0) {
+        // Rilevato doppio tocco: attiva/disattiva il gioco o la palla
+        e.preventDefault();
+        togglePlayState();
+      }
+      lastTapTime = currentTime;
+    });
+
     canvas.addEventListener('touchmove', (e) => {
       let rect = canvas.getBoundingClientRect();
       let touchX = e.touches[0].clientX - rect.left;
@@ -509,7 +573,7 @@
       paddle.x = (touchX * scale) - (paddle.w / 2);
     });
 
-    document.getElementById('start-btn').onclick = () => {
+    function togglePlayState() {
       if (!isRunning) {
         isRunning = true;
         ball.active = true;
@@ -520,6 +584,13 @@
         cancelAnimationFrame(animationId);
         document.getElementById('start-btn').innerText = "PLAY";
       }
+    }
+
+    document.getElementById('start-btn').onclick = togglePlayState;
+
+    // Chiusura del popup istruzioni
+    document.getElementById('close-popup-btn').onclick = () => {
+      document.getElementById('instructions-popup').style.display = 'none';
     };
 
     initBricks();
