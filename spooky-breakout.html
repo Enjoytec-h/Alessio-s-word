@@ -213,7 +213,7 @@
     const ctx = canvas.getContext('2d');
 
     const internalWidth = 360;
-    const internalHeight = 440; // Leggermente ridotto in altezza per occupare meno spazio verticale
+    const internalHeight = 440; 
     canvas.width = internalWidth;
     canvas.height = internalHeight;
 
@@ -246,7 +246,7 @@
     let brickRowCount = 5;
     let brickColumnCount = 6;
     let brickWidth = 52;
-    let brickHeight = 18; // Leggermente più sottili
+    let brickHeight = 18; 
     let brickPadding = 6;
     let brickOffsetTop = 25;
     let brickOffsetLeft = 15;
@@ -314,30 +314,28 @@
       ctx.closePath();
     }
 
-  function drawPowerUps() {
-  powerUps.forEach(p => {
-    // Sfondo luminoso del power-up
-    ctx.save();
-    ctx.shadowBlur = 8;
-    ctx.shadowColor = p.color;
-    
-    ctx.fillStyle = '#141026';
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = p.color;
-    ctx.stroke();
-    ctx.restore();
+    function drawPowerUps() {
+      powerUps.forEach(p => {
+        ctx.save();
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = p.color;
+        
+        ctx.fillStyle = '#141026';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = p.color;
+        ctx.stroke();
+        ctx.restore();
 
-    // Disegna il simbolo mostruoso al centro
-    ctx.font = '11px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(p.symbol, p.x, p.y + 1);
-  });
-}
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.symbol, p.x, p.y + 1);
+      });
+    }
 
     function collisionDetection() {
       for (let c = 0; c < brickColumnCount; c++) {
@@ -351,13 +349,13 @@
               document.getElementById('score').innerText = score;
 
               if (b.status === 0 && Math.random() < 0.35) {
-               let types = [
-  {type: 'expand', symbol: '👻', color: '#38b000', name: 'Fantasma Crescita'}, // Fantasmino verde
-  {type: 'shrink', symbol: '🕷️', color: '#ff0055', name: 'Ragno rimpicciolente'}, // Ragno
-  {type: 'slow', symbol: '🧪', color: '#00b4d8', name: 'Pozione Lenta'}, // Pozione blu
-  {type: 'fast', symbol: '⚡', color: '#faa307', name: 'Scossa Rapida'}, // Fulmine
-  {type: 'life', symbol: '🦇', color: '#7209b7', name: 'Pipistrello Vita'} // Pipistrello
-];
+                let types = [
+                  {type: 'expand', symbol: '👻', color: '#38b000', name: 'Fantasma Crescita'},
+                  {type: 'shrink', symbol: '🕷️', color: '#ff0055', name: 'Ragno rimpicciolente'},
+                  {type: 'slow', symbol: '🧪', color: '#00b4d8', name: 'Pozione Lenta'},
+                  {type: 'fast', symbol: '⚡', color: '#faa307', name: 'Scossa Rapida'},
+                  {type: 'life', symbol: '🦇', color: '#7209b7', name: 'Pipistrello Vita'}
+                ];
                 let chosen = types[Math.floor(Math.random() * types.length)];
                 powerUps.push({
                   x: b.x + brickWidth / 2,
