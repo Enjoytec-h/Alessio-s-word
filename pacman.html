@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-  <title>Spooky Pac-Man 🎃 - Alessio's World</title>
+  <title>Spooky Breakout 🦇 - Alessio's World</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@700&display=swap" rel="stylesheet">
   <!-- CONFIGURAZIONE PWA -->
@@ -39,35 +39,38 @@
     .game-container {
       width: 100%;
       height: 100%;
-      max-width: 500px;
-      padding: 10px;
+      max-width: 420px;
+      padding: 6px 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
+      position: relative;
     }
     .back-home-container {
       text-align: left;
       width: 100%;
+      flex-shrink: 0;
     }
     .back-btn {
       background: #141026;
       border: 2px solid #38285c;
       color: #ff7518;
       font-family: 'Creepster', cursive;
-      font-size: 0.9rem;
-      padding: 4px 10px;
-      border-radius: 6px;
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      border-radius: 4px;
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
     }
     .halloween-title {
-      font-size: 1.4rem;
-      margin: 4px 0;
+      font-size: 1.2rem;
+      margin: 2px 0;
       text-align: center;
       color: #ff7518;
       font-family: 'Creepster', cursive;
+      flex-shrink: 0;
     }
     
     /* Pannello statistiche e play in alto */
@@ -78,9 +81,9 @@
       width: 100%;
       background: #141026;
       border: 2px solid #38285c;
-      border-radius: 8px;
-      padding: 6px 12px;
-      margin-bottom: 6px;
+      border-radius: 6px;
+      padding: 4px 10px;
+      flex-shrink: 0;
     }
     .hud-stat {
       text-align: center;
@@ -88,12 +91,12 @@
       flex-direction: column;
     }
     .hud-stat label {
-      font-size: 0.65rem;
+      font-size: 0.55rem;
       color: #a0a0ff;
       font-family: 'Roboto', sans-serif;
     }
     .hud-stat span {
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       color: #fff;
       font-weight: bold;
     }
@@ -102,14 +105,14 @@
       color: #141026;
       border: none;
       font-family: 'Creepster', cursive;
-      font-size: 0.95rem;
-      padding: 6px 14px;
-      border-radius: 6px;
+      font-size: 0.85rem;
+      padding: 4px 10px;
+      border-radius: 4px;
       cursor: pointer;
       font-weight: bold;
     }
 
-    /* Canvas dinamico che sfrutta tutto lo spazio disponibile */
+    /* Canvas dinamico flessibile */
     .canvas-wrapper {
       flex: 1;
       display: flex;
@@ -117,67 +120,114 @@
       align-items: center;
       width: 100%;
       min-height: 0;
-      padding: 4px 0;
+      padding: 2px 0;
+      position: relative;
     }
-    canvas#pacman-canvas {
+    canvas#breakout-canvas {
       background-color: #0b0914;
       border: 2px solid #4a2875;
-      border-radius: 8px;
-      box-shadow: inset 0 0 12px #000;
+      border-radius: 6px;
+      box-shadow: inset 0 0 10px #000;
       width: 100%;
       height: 100%;
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
       display: block;
+      touch-action: none;
     }
 
-    /* BARRA TOUCH ORIZZONTALE UNICA (Stile Joypad) */
+    /* Popup Istruzioni / Doppio Tocco */
+    #instructions-popup {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(20, 16, 38, 0.95);
+      border: 2px solid #9d4edd;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      color: #fff;
+      font-family: 'Roboto', sans-serif;
+      z-index: 10;
+      box-shadow: 0 0 20px rgba(157, 78, 221, 0.5);
+      max-width: 300px;
+      width: 90%;
+    }
+    #instructions-popup h2 {
+      font-family: 'Creepster', cursive;
+      color: #ff7518;
+      font-size: 1.4rem;
+      margin-top: 0;
+    }
+    #instructions-popup p {
+      font-size: 0.85rem;
+      color: #d8b4fe;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+    #close-popup-btn {
+      background: #ff7518;
+      color: #141026;
+      border: none;
+      font-family: 'Creepster', cursive;
+      font-size: 1rem;
+      padding: 6px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* Controlli Touch Inferiori compatti */
     .touch-controls {
       width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 8px;
-      margin-top: 6px;
-      margin-bottom: 6px;
+      gap: 10px;
+      flex-shrink: 0;
+      margin-bottom: 4px;
     }
     .touch-btn {
       flex: 1;
-      height: 58px;
+      height: 46px;
       background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
       border: 2px solid #5a3291;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 4px 0 #0a0714;
+      box-shadow: 0 3px 0 #0a0714;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
-      padding: 0;
+      color: #ff7518;
+      font-family: 'Creepster', cursive;
+      font-size: 1.1rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
+      user-select: none;
     }
-    .touch-btn:active {
-      transform: translateY(3px);
+    .touch-btn:active, .touch-btn.pressed {
+      transform: translateY(2px);
       box-shadow: 0 1px 0 #0a0714;
       background: #9d4edd;
-    }
-    .hand-icon {
-      width: 75%;
-      height: 75%;
-      object-fit: contain;
-      image-rendering: pixelated;
+      color: #fff;
     }
   </style>
 </head>
 <body>
   <div class="game-container">
+    <!-- Popup Istruzioni -->
+    <div id="instructions-popup">
+      <h2>Istruzioni 🦇</h2>
+      <p>Muovi la barra con i tasti o trascinando sul campo.<br><br>Esegui un <b>doppio tocco rapido</b> sullo schermo per lanciare la palla o metterla in pausa!</p>
+      <button id="close-popup-btn">HO CAPITO</button>
+    </div>
+
     <div class="back-home-container">
       <a href="index.html" class="back-btn">⬅ TORNA ALLA HOME</a>
     </div>
 
-    <h1 class="halloween-title">SPOOKY PAC-MAN 🎃</h1>
+    <h1 class="halloween-title">SPOOKY BREAKOUT 🦇</h1>
 
     <!-- HUD Superiore -->
     <div class="top-hud">
@@ -191,235 +241,360 @@
       </div>
       <div class="hud-stat">
         <label>LIVES</label>
-        <span id="lives" style="font-size: 0.7rem;">🦇🦇🦇</span>
+        <span id="lives" style="font-size: 0.65rem;">🦇🦇🦇</span>
       </div>
-      <button id="start-pacman-btn" class="gothic-btn-top">PLAY</button>
+      <button id="start-btn" class="gothic-btn-top">PLAY</button>
     </div>
 
-    <!-- Canvas contenuto in un wrapper flessibile -->
+    <!-- Canvas -->
     <div class="canvas-wrapper">
-      <canvas id="pacman-canvas"></canvas>
+      <canvas id="breakout-canvas"></canvas>
     </div>
 
-    <!-- Controlli Touch in Orizzontale (Barra Joypad Unica) -->
+    <!-- Controlli Touch laterali compatti -->
     <div class="touch-controls">
-      <button class="touch-btn" id="p-left"><img src="sinistra.jpg" class="hand-icon" alt="Sinistra"></button>
-      <button class="touch-btn" id="p-down"><img src="sotto.jpg" class="hand-icon" alt="Sotto"></button>
-      <button class="touch-btn" id="p-up"><img src="sopra.jpg" class="hand-icon" alt="Sopra"></button>
-      <button class="touch-btn" id="p-right"><img src="destra.jpg" class="hand-icon" alt="Destra"></button>
+      <button class="touch-btn" id="btn-left">◀ SINISTRA</button>
+      <button class="touch-btn" id="btn-right">DESTRA ▶</button>
     </div>
   </div>
 
   <script>
-    const canvas = document.getElementById('pacman-canvas');
+    const canvas = document.getElementById('breakout-canvas');
     const ctx = canvas.getContext('2d');
 
-    const internalSize = 336;
-    canvas.width = internalSize;
-    canvas.height = internalSize;
-    const tileSize = 24;
+    const internalWidth = 360;
+    const internalHeight = 440; 
+    canvas.width = internalWidth;
+    canvas.height = internalHeight;
 
-    let map = [
-      [1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-      [1,2,0,0,0,0,1,1,0,0,0,0,2,1],
-      [1,0,1,1,0,1,1,1,1,0,1,1,0,1],
-      [1,0,0,0,0,0,0,0,0,0,0,0,0,1],
-      [1,0,1,1,0,1,0,0,1,0,1,1,0,1],
-      [1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-      [1,1,1,1,0,1,0,0,1,0,1,1,1,1],
-      [1,1,1,1,0,1,0,0,1,0,1,1,1,1],
-      [1,0,0,0,0,0,0,0,0,0,0,0,0,1],
-      [1,0,1,1,0,1,1,1,1,0,1,1,0,1],
-      [1,2,0,1,0,0,0,0,0,0,1,0,2,1],
-      [1,1,0,1,0,1,1,1,1,0,1,0,1,1],
-      [1,0,0,0,0,0,0,0,0,0,0,0,0,1],
-      [1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-    ];
-
-    let originalMap = JSON.parse(JSON.stringify(map));
     let score = 0;
     let level = 1;
     let lives = 3;
-    let gameInterval = null;
     let isRunning = false;
-    let powerTimer = 0;
+    let animationId = null;
 
-    let mummia = { x: 6, y: 8, dx: 0, dy: 0 };
-    let nemici = [
-      { x: 6, y: 6, dx: 1, dy: 0, color: '#a0a0ff' },
-      { x: 7, y: 6, dx: -1, dy: 0, color: '#ff4444' }
-    ];
+    let paddle = {
+      w: 80,
+      h: 14,
+      x: internalWidth / 2 - 40,
+      y: internalHeight - 25,
+      speed: 7
+    };
 
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let leftPressed = false;
+    let rightPressed = false;
 
-      for (let r = 0; r < map.length; r++) {
-        for (let c = 0; c < map[r].length; c++) {
-          let posX = c * tileSize;
-          let posY = r * tileSize;
+    let ball = {
+      x: internalWidth / 2,
+      y: internalHeight - 45,
+      r: 6,
+      speedX: 3,
+      speedY: -3,
+      active: false
+    };
 
-          if (map[r][c] === 1) {
-            ctx.fillStyle = '#221a36';
-            ctx.fillRect(posX, posY, tileSize, tileSize);
-            ctx.strokeStyle = '#4a2875';
-            ctx.strokeRect(posX, posY, tileSize, tileSize);
-          } 
-          else if (map[r][c] === 0) {
-            let cx = posX + tileSize / 2;
-            let cy = posY + tileSize / 2;
-            ctx.fillStyle = '#e0e0e0';
-            ctx.fillRect(cx - 2, cy - 4, 4, 10);
-            ctx.fillStyle = '#ff7518';
-            ctx.beginPath();
-            ctx.arc(cx, cy - 6, 3, 0, Math.PI * 2);
-            ctx.fill();
-          } 
-          else if (map[r][c] === 2) {
-            let cx = posX + tileSize / 2;
-            let cy = posY + tileSize / 2;
-            ctx.fillStyle = '#ff7518';
-            ctx.beginPath();
-            ctx.arc(cx, cy + 1, 7, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#38b000';
-            ctx.fillRect(cx - 1, cy - 9, 2, 4);
+    let brickRowCount = 5;
+    let brickColumnCount = 6;
+    let brickWidth = 52;
+    let brickHeight = 18; 
+    let brickPadding = 6;
+    let brickOffsetTop = 25;
+    let brickOffsetLeft = 15;
+
+    let bricks = [];
+
+    function initBricks() {
+      bricks = [];
+      for (let c = 0; c < brickColumnCount; c++) {
+        bricks[c] = [];
+        for (let r = 0; r < brickRowCount; r++) {
+          let health = (r === 0 || r === 1) ? 2 : 1;
+          bricks[c][r] = {
+            x: (c * (brickWidth + brickPadding)) + brickOffsetLeft,
+            y: (r * (brickHeight + brickPadding)) + brickOffsetTop,
+            status: health,
+            maxHealth: health
+          };
+        }
+      }
+    }
+
+    let powerUps = [];
+
+    function resetPositions() {
+      paddle.x = internalWidth / 2 - paddle.w / 2;
+      paddle.w = 80;
+      ball.x = internalWidth / 2;
+      ball.y = paddle.y - 12;
+      ball.speedX = 3 * (Math.random() > 0.5 ? 1 : -1);
+      ball.speedY = -3;
+      ball.active = false;
+    }
+
+    function drawBricks() {
+      for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+          let b = bricks[c][r];
+          if (b.status > 0) {
+            ctx.fillStyle = b.status === 2 ? '#9d4edd' : '#ff7518';
+            ctx.fillRect(b.x, b.y, brickWidth, brickHeight);
+            ctx.strokeStyle = '#38285c';
+            ctx.strokeRect(b.x, b.y, brickWidth, brickHeight);
+
+            ctx.fillStyle = '#0b0914';
+            ctx.font = '9px Roboto';
+            ctx.fillText(b.status === 2 ? '💀' : '🎃', b.x + brickWidth / 2 - 6, b.y + 13);
           }
         }
       }
+    }
 
-      let mx = mummia.x * tileSize + tileSize/2;
-      let my = mummia.y * tileSize + tileSize/2;
-      ctx.fillStyle = powerTimer > 0 ? '#00ffcc' : '#d4d4d4';
+    function drawPaddle() {
+      ctx.fillStyle = '#00ffcc';
+      ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
+      ctx.strokeStyle = '#fff';
+      ctx.strokeRect(paddle.x, paddle.y, paddle.w, paddle.h);
+    }
+
+    function drawBall() {
+      ctx.fillStyle = '#ff4444';
       ctx.beginPath();
-      ctx.arc(mx, my, 8, 0, Math.PI * 2);
+      ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = '#000';
-      ctx.fillRect(mx - 3, my - 4, 2, 2);
-      ctx.fillRect(mx + 1, my - 4, 2, 2);
+      ctx.closePath();
+    }
 
-      nemici.forEach((n, index) => {
-        let nx = n.x * tileSize + tileSize/2;
-        let ny = n.y * tileSize + tileSize/2;
+    function drawPowerUps() {
+      powerUps.forEach(p => {
+        ctx.save();
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = p.color;
         
-        ctx.fillStyle = powerTimer > 0 ? '#3333ff' : n.color;
+        ctx.fillStyle = '#141026';
         ctx.beginPath();
-        ctx.arc(nx, ny, 8, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
         ctx.fill();
+        
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = p.color;
+        ctx.stroke();
+        ctx.restore();
 
-        ctx.fillStyle = '#fff';
-        if (index === 0) {
-          ctx.fillRect(nx - 3, ny - 4, 2, 3);
-          ctx.fillRect(nx + 1, ny - 4, 2, 3);
-        } else {
-          ctx.fillStyle = '#000';
-          ctx.fillRect(nx - 4, ny - 7, 2, 2);
-          ctx.fillRect(nx + 2, ny - 7, 2, 2);
-        }
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.symbol, p.x, p.y + 1);
       });
     }
 
-    function update() {
-      let nextX = mummia.x + mummia.dx;
-      let nextY = mummia.y + mummia.dy;
-      if (nextX >= 0 && nextX < map[0].length && map[nextY][nextX] !== 1) {
-        mummia.x = nextX;
-        mummia.y = nextY;
-      }
+    function collisionDetection() {
+      for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+          let b = bricks[c][r];
+          if (b.status > 0) {
+            if (ball.x > b.x && ball.x < b.x + brickWidth && ball.y > b.y && ball.y < b.y + brickHeight) {
+              ball.speedY = -ball.speedY;
+              b.status--;
+              score += (b.maxHealth === 2 ? 20 : 10);
+              document.getElementById('score').innerText = score;
 
-      if (map[mummia.y][mummia.x] === 0) {
-        map[mummia.y][mummia.x] = 3;
-        score += 10;
-        document.getElementById('score').innerText = score;
-        checkLevelComplete();
-      } else if (map[mummia.y][mummia.x] === 2) {
-        map[mummia.y][mummia.x] = 3;
-        score += 50;
-        powerTimer = 30;
-      }
+              if (b.status === 0 && Math.random() < 0.35) {
+                let types = [
+                  {type: 'expand', symbol: '👻', color: '#38b000', name: 'Fantasma Crescita'},
+                  {type: 'shrink', symbol: '🕷️', color: '#ff0055', name: 'Ragno rimpicciolente'},
+                  {type: 'slow', symbol: '🧪', color: '#00b4d8', name: 'Pozione Lenta'},
+                  {type: 'fast', symbol: '⚡', color: '#faa307', name: 'Scossa Rapida'},
+                  {type: 'life', symbol: '🦇', color: '#7209b7', name: 'Pipistrello Vita'}
+                ];
+                let chosen = types[Math.floor(Math.random() * types.length)];
+                powerUps.push({
+                  x: b.x + brickWidth / 2,
+                  y: b.y + brickHeight,
+                  dy: 2,
+                  type: chosen.type,
+                  symbol: chosen.symbol,
+                  color: chosen.color
+                });
+              }
 
-      if (powerTimer > 0) powerTimer--;
-
-      nemici.forEach(n => {
-        let directions = [{dx:0, dy:-1}, {dx:0, dy:1}, {dx:-1, dy:0}, {dx:1, dy:0}];
-        let validDirs = directions.filter(d => {
-          let nx = n.x + d.dx, ny = n.y + d.dy;
-          return nx >= 0 && nx < map[0].length && ny >= 0 && ny < map.length && map[ny][nx] !== 1;
-        });
-        if (validDirs.length > 0) {
-          let chosen = validDirs[Math.floor(Math.random() * validDirs.length)];
-          n.dx = chosen.dx;
-          n.dy = chosen.dy;
-        }
-        n.x += n.dx;
-        n.y += n.dy;
-
-        if (n.x === mummia.x && n.y === mummia.y) {
-          if (powerTimer > 0) {
-            n.x = 6; n.y = 6;
-            score += 200;
-          } else {
-            lives--;
-            document.getElementById('lives').innerText = '🦇'.repeat(Math.max(0, lives));
-            resetPositions();
-            if (lives <= 0) {
-              alert("Game Over! I mostri ti hanno preso!");
-              resetGame();
+              checkWinCondition();
             }
           }
         }
-      });
-
-      draw();
+      }
     }
 
-    function checkLevelComplete() {
-      let rem = 0;
-      for (let r = 0; r < map.length; r++) {
-        for (let c = 0; c < map[r].length; c++) {
-          if (map[r][c] === 0 || map[r][c] === 2) rem++;
+    function checkWinCondition() {
+      let won = true;
+      for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+          if (bricks[c][r].status > 0) won = false;
         }
       }
-      if (rem === 0) {
+      if (won) {
         level++;
         document.getElementById('level').innerText = level;
-        map = JSON.parse(JSON.stringify(originalMap));
+        initBricks();
         resetPositions();
-        alert("Livello superato! Livello " + level);
+        alert("Livello completato! Avanti al livello " + level);
       }
     }
 
-    function resetPositions() {
-      mummia.x = 6; mummia.y = 8; mummia.dx = 0; mummia.dy = 0;
-      nemici[0].x = 6; nemici[0].y = 6;
-      nemici[1].x = 7; nemici[1].y = 6;
+    function update() {
+      if (leftPressed) {
+        paddle.x -= paddle.speed;
+      } else if (rightPressed) {
+        paddle.x += paddle.speed;
+      }
+
+      if (paddle.x < 0) paddle.x = 0;
+      if (paddle.x + paddle.w > internalWidth) paddle.x = internalWidth - paddle.w;
+
+      if (ball.active) {
+        ball.x += ball.speedX;
+        ball.y += ball.speedY;
+
+        if (ball.x + ball.r > internalWidth || ball.x - ball.r < 0) {
+          ball.speedX = -ball.speedX;
+        }
+        if (ball.y - ball.r < 0) {
+          ball.speedY = -ball.speedY;
+        }
+        if (ball.y + ball.r > paddle.y && ball.x > paddle.x && ball.x < paddle.x + paddle.w) {
+          let hitPoint = ball.x - (paddle.x + paddle.w / 2);
+          ball.speedX = hitPoint * 0.15;
+          ball.speedY = -Math.abs(ball.speedY);
+        }
+        if (ball.y > internalHeight) {
+          lives--;
+          document.getElementById('lives').innerText = '🦇'.repeat(Math.max(0, lives));
+          resetPositions();
+          if (lives <= 0) {
+            alert("Game Over! La pozione si è esaurita!");
+            resetGame();
+          }
+        }
+      } else {
+        ball.x = paddle.x + paddle.w / 2;
+      }
+
+      powerUps.forEach((p, index) => {
+        p.y += p.dy;
+        if (p.y >= paddle.y && p.x >= paddle.x && p.x <= paddle.x + paddle.w) {
+          applyPowerUp(p.type);
+          powerUps.splice(index, 1);
+        } else if (p.y > internalHeight) {
+          powerUps.splice(index, 1);
+        }
+      });
+
+      collisionDetection();
+    }
+
+    function applyPowerUp(type) {
+      if (type === 'expand') {
+        paddle.w = Math.min(130, paddle.w + 25);
+      } else if (type === 'shrink') {
+        paddle.w = Math.max(45, paddle.w - 25);
+      } else if (type === 'slow') {
+        ball.speedX *= 0.8;
+        ball.speedY *= 0.8;
+      } else if (type === 'fast') {
+        ball.speedX *= 1.25;
+        ball.speedY *= 1.25;
+      } else if (type === 'life') {
+        lives = Math.min(5, lives + 1);
+        document.getElementById('lives').innerText = '🦇'.repeat(lives);
+      }
     }
 
     function resetGame() {
-      score = 0; level = 1; lives = 3;
-      map = JSON.parse(JSON.stringify(originalMap));
+      score = 0;
+      level = 1;
+      lives = 3;
       document.getElementById('score').innerText = score;
       document.getElementById('level').innerText = level;
       document.getElementById('lives').innerText = '🦇🦇🦇';
+      initBricks();
       resetPositions();
+      isRunning = false;
+      document.getElementById('start-btn').innerText = "PLAY";
     }
 
-    document.getElementById('p-up').onclick = () => { mummia.dx = 0; mummia.dy = -1; };
-    document.getElementById('p-down').onclick = () => { mummia.dx = 0; mummia.dy = 1; };
-    document.getElementById('p-left').onclick = () => { mummia.dx = -1; mummia.dy = 0; };
-    document.getElementById('p-right').onclick = () => { mummia.dx = 1; mummia.dy = 0; };
+    function draw() {
+      ctx.clearRect(0, 0, internalWidth, internalHeight);
+      drawBricks();
+      drawPaddle();
+      drawBall();
+      drawPowerUps();
+    }
 
-    document.getElementById('start-pacman-btn').onclick = () => {
+    function loop() {
+      if (isRunning) {
+        update();
+        draw();
+        animationId = requestAnimationFrame(loop);
+      }
+    }
+
+    const btnLeft = document.getElementById('btn-left');
+    const btnRight = document.getElementById('btn-right');
+
+    btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); leftPressed = true; btnLeft.classList.add('pressed'); });
+    btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); leftPressed = false; btnLeft.classList.remove('pressed'); });
+    btnLeft.addEventListener('mousedown', () => { leftPressed = true; btnLeft.classList.add('pressed'); });
+    btnLeft.addEventListener('mouseup', () => { leftPressed = false; btnLeft.classList.remove('pressed'); });
+    btnLeft.addEventListener('mouseleave', () => { leftPressed = false; btnLeft.classList.remove('pressed'); });
+
+    btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); rightPressed = true; btnRight.classList.add('pressed'); });
+    btnRight.addEventListener('touchend', (e) => { e.preventDefault(); rightPressed = false; btnRight.classList.remove('pressed'); });
+    btnRight.addEventListener('mousedown', () => { rightPressed = true; btnRight.classList.add('pressed'); });
+    btnRight.addEventListener('mouseup', () => { rightPressed = false; btnRight.classList.remove('pressed'); });
+    btnRight.addEventListener('mouseleave', () => { rightPressed = false; btnRight.classList.remove('pressed'); });
+
+    // Gestione Movimento touch e Rilevamento Doppio Tocco (Double Tap)
+    let lastTapTime = 0;
+    canvas.addEventListener('touchstart', (e) => {
+      let currentTime = new Date().getTime();
+      let tapLength = currentTime - lastTapTime;
+      
+      if (tapLength < 300 && tapLength > 0) {
+        // Rilevato doppio tocco: attiva/disattiva il gioco o la palla
+        e.preventDefault();
+        togglePlayState();
+      }
+      lastTapTime = currentTime;
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      let rect = canvas.getBoundingClientRect();
+      let touchX = e.touches[0].clientX - rect.left;
+      let scale = internalWidth / rect.width;
+      paddle.x = (touchX * scale) - (paddle.w / 2);
+    });
+
+    function togglePlayState() {
       if (!isRunning) {
         isRunning = true;
-        gameInterval = setInterval(update, 350);
-        document.getElementById('start-pacman-btn').innerText = "PAUSE";
+        ball.active = true;
+        document.getElementById('start-btn').innerText = "PAUSE";
+        loop();
       } else {
         isRunning = false;
-        clearInterval(gameInterval);
-        document.getElementById('start-pacman-btn').innerText = "PLAY";
+        cancelAnimationFrame(animationId);
+        document.getElementById('start-btn').innerText = "PLAY";
       }
+    }
+
+    document.getElementById('start-btn').onclick = togglePlayState;
+
+    // Chiusura del popup istruzioni
+    document.getElementById('close-popup-btn').onclick = () => {
+      document.getElementById('instructions-popup').style.display = 'none';
     };
 
+    initBricks();
+    resetPositions();
     draw();
   </script>
 </body>
