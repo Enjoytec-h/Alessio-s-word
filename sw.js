@@ -3,10 +3,11 @@ const assetsToCache = [
   'index.html',
   'tetris.html',
   'pacman.html',
+  'spooky-breakout.html', // <-- AGGIUNTO IL NUOVO GIOCO
   'style.css',
   'tetris.js',
-  'manifest.json',      // <-- AGGIUNTO QUI
-  'zucca-icona.png',    // <-- AGGIUNTO QUI (metti il nome esatto della tua icona)
+  'manifest.json',
+  'zucca-icona.png',
   'sinistra.jpg',
   'destra.jpg',
   'sopra.jpg',
