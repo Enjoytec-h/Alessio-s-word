@@ -39,8 +39,8 @@
     .game-container {
       width: 100%;
       height: 100%;
-      max-width: 500px;
-      padding: 10px;
+      max-width: 420px;
+      padding: 6px 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -49,25 +49,27 @@
     .back-home-container {
       text-align: left;
       width: 100%;
+      flex-shrink: 0;
     }
     .back-btn {
       background: #141026;
       border: 2px solid #38285c;
       color: #ff7518;
       font-family: 'Creepster', cursive;
-      font-size: 0.9rem;
-      padding: 4px 10px;
-      border-radius: 6px;
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      border-radius: 4px;
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
     }
     .halloween-title {
-      font-size: 1.4rem;
-      margin: 4px 0;
+      font-size: 1.2rem;
+      margin: 2px 0;
       text-align: center;
       color: #ff7518;
       font-family: 'Creepster', cursive;
+      flex-shrink: 0;
     }
     
     /* Pannello statistiche e play in alto */
@@ -78,9 +80,9 @@
       width: 100%;
       background: #141026;
       border: 2px solid #38285c;
-      border-radius: 8px;
-      padding: 6px 12px;
-      margin-bottom: 6px;
+      border-radius: 6px;
+      padding: 4px 10px;
+      flex-shrink: 0;
     }
     .hud-stat {
       text-align: center;
@@ -88,12 +90,12 @@
       flex-direction: column;
     }
     .hud-stat label {
-      font-size: 0.65rem;
+      font-size: 0.55rem;
       color: #a0a0ff;
       font-family: 'Roboto', sans-serif;
     }
     .hud-stat span {
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       color: #fff;
       font-weight: bold;
     }
@@ -102,14 +104,14 @@
       color: #141026;
       border: none;
       font-family: 'Creepster', cursive;
-      font-size: 0.95rem;
-      padding: 6px 14px;
-      border-radius: 6px;
+      font-size: 0.85rem;
+      padding: 4px 10px;
+      border-radius: 4px;
       cursor: pointer;
       font-weight: bold;
     }
 
-    /* Canvas dinamico */
+    /* Canvas dinamico flessibile */
     .canvas-wrapper {
       flex: 1;
       display: flex;
@@ -117,13 +119,13 @@
       align-items: center;
       width: 100%;
       min-height: 0;
-      padding: 4px 0;
+      padding: 2px 0;
     }
     canvas#breakout-canvas {
       background-color: #0b0914;
       border: 2px solid #4a2875;
-      border-radius: 8px;
-      box-shadow: inset 0 0 12px #000;
+      border-radius: 6px;
+      box-shadow: inset 0 0 10px #000;
       width: 100%;
       height: 100%;
       max-width: 100%;
@@ -133,36 +135,36 @@
       touch-action: none;
     }
 
-    /* Controlli Touch Inferiori */
+    /* Controlli Touch Inferiori compatti */
     .touch-controls {
       width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 10px;
-      margin-top: 6px;
-      margin-bottom: 6px;
+      flex-shrink: 0;
+      margin-bottom: 4px;
     }
     .touch-btn {
       flex: 1;
-      height: 52px;
+      height: 46px;
       background: linear-gradient(180deg, #2a2244 0%, #151026 100%);
       border: 2px solid #5a3291;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 4px 0 #0a0714;
+      box-shadow: 0 3px 0 #0a0714;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
       color: #ff7518;
       font-family: 'Creepster', cursive;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       display: flex;
       align-items: center;
       justify-content: center;
       user-select: none;
     }
     .touch-btn:active, .touch-btn.pressed {
-      transform: translateY(3px);
+      transform: translateY(2px);
       box-shadow: 0 1px 0 #0a0714;
       background: #9d4edd;
       color: #fff;
@@ -189,7 +191,7 @@
       </div>
       <div class="hud-stat">
         <label>LIVES</label>
-        <span id="lives" style="font-size: 0.7rem;">🦇🦇🦇</span>
+        <span id="lives" style="font-size: 0.65rem;">🦇🦇🦇</span>
       </div>
       <button id="start-btn" class="gothic-btn-top">PLAY</button>
     </div>
@@ -199,7 +201,7 @@
       <canvas id="breakout-canvas"></canvas>
     </div>
 
-    <!-- Controlli Touch laterali per muovere la barra -->
+    <!-- Controlli Touch laterali compatti -->
     <div class="touch-controls">
       <button class="touch-btn" id="btn-left">◀ SINISTRA</button>
       <button class="touch-btn" id="btn-right">DESTRA ▶</button>
@@ -211,7 +213,7 @@
     const ctx = canvas.getContext('2d');
 
     const internalWidth = 360;
-    const internalHeight = 480;
+    const internalHeight = 440; // Leggermente ridotto in altezza per occupare meno spazio verticale
     canvas.width = internalWidth;
     canvas.height = internalHeight;
 
@@ -221,36 +223,32 @@
     let isRunning = false;
     let animationId = null;
 
-    // Barriera (Paddle)
     let paddle = {
       w: 80,
       h: 14,
       x: internalWidth / 2 - 40,
-      y: internalHeight - 30,
+      y: internalHeight - 25,
       speed: 7
     };
 
-    // Stati dei comandi (tastiera / pulsanti)
     let leftPressed = false;
     let rightPressed = false;
 
-    // Palla
     let ball = {
       x: internalWidth / 2,
-      y: internalHeight - 50,
+      y: internalHeight - 45,
       r: 6,
       speedX: 3,
       speedY: -3,
       active: false
     };
 
-    // Mattoni (Righe, Colonne)
     let brickRowCount = 5;
     let brickColumnCount = 6;
     let brickWidth = 52;
-    let brickHeight = 20;
+    let brickHeight = 18; // Leggermente più sottili
     let brickPadding = 6;
-    let brickOffsetTop = 30;
+    let brickOffsetTop = 25;
     let brickOffsetLeft = 15;
 
     let bricks = [];
@@ -294,8 +292,8 @@
             ctx.strokeRect(b.x, b.y, brickWidth, brickHeight);
 
             ctx.fillStyle = '#0b0914';
-            ctx.font = '10px Roboto';
-            ctx.fillText(b.status === 2 ? '💀' : '🎃', b.x + brickWidth / 2 - 6, b.y + 14);
+            ctx.font = '9px Roboto';
+            ctx.fillText(b.status === 2 ? '💀' : '🎃', b.x + brickWidth / 2 - 6, b.y + 13);
           }
         }
       }
@@ -382,7 +380,6 @@
     }
 
     function update() {
-      // Movimento barra basato sui flag di pressione
       if (leftPressed) {
         paddle.x -= paddle.speed;
       } else if (rightPressed) {
@@ -392,7 +389,6 @@
       if (paddle.x < 0) paddle.x = 0;
       if (paddle.x + paddle.w > internalWidth) paddle.x = internalWidth - paddle.w;
 
-      // Movimento palla
       if (ball.active) {
         ball.x += ball.speedX;
         ball.y += ball.speedY;
@@ -480,25 +476,21 @@
       }
     }
 
-    // Gestione robusta dei pulsanti Touch e Mouse
     const btnLeft = document.getElementById('btn-left');
     const btnRight = document.getElementById('btn-right');
 
-    // Sinistra
     btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); leftPressed = true; btnLeft.classList.add('pressed'); });
     btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); leftPressed = false; btnLeft.classList.remove('pressed'); });
     btnLeft.addEventListener('mousedown', () => { leftPressed = true; btnLeft.classList.add('pressed'); });
     btnLeft.addEventListener('mouseup', () => { leftPressed = false; btnLeft.classList.remove('pressed'); });
     btnLeft.addEventListener('mouseleave', () => { leftPressed = false; btnLeft.classList.remove('pressed'); });
 
-    // Destra
     btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); rightPressed = true; btnRight.classList.add('pressed'); });
     btnRight.addEventListener('touchend', (e) => { e.preventDefault(); rightPressed = false; btnRight.classList.remove('pressed'); });
     btnRight.addEventListener('mousedown', () => { rightPressed = true; btnRight.classList.add('pressed'); });
     btnRight.addEventListener('mouseup', () => { rightPressed = false; btnRight.classList.remove('pressed'); });
     btnRight.addEventListener('mouseleave', () => { rightPressed = false; btnRight.classList.remove('pressed'); });
 
-    // Supporto anche al trascinamento diretto sul canvas
     canvas.addEventListener('touchmove', (e) => {
       let rect = canvas.getBoundingClientRect();
       let touchX = e.touches[0].clientX - rect.left;
